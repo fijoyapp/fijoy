@@ -23,11 +23,6 @@ vi.mock('relay-runtime', async (importOriginal) => ({
   ...(await importOriginal<typeof import('relay-runtime')>()),
   readInlineData: (_fragment: unknown, fragmentRef: unknown) => fragmentRef,
 }))
-vi.mock('@/components/selection-rows', () => ({
-  SelectionRows: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-}))
 vi.mock('@/components/ui/avatar', () => ({
   Avatar: ({ children }: { children: React.ReactNode }) => (
     <span>{children}</span>
@@ -37,6 +32,13 @@ vi.mock('@/components/ui/avatar', () => ({
   ),
   AvatarImage: () => null,
 }))
+
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+Element.prototype.scrollIntoView = vi.fn()
 
 const investments = [
   {
@@ -75,20 +77,27 @@ afterEach(() => {
   mobileState.value = true
 })
 
-it('collapses to the selected investment and expands when clicked', () => {
+it('keeps the mobile trigger stable while selecting an investment', async () => {
   render(<Picker />)
 
-  fireEvent.click(screen.getByRole('radio', { name: /Index Fund/ }))
-  const summary = screen.getByRole('button', {
-    name: 'Investment: Index Fund',
+  const trigger = screen.getByRole('button', {
+    name: 'Investment: Select an investment',
   })
-  expect(screen.queryByRole('radio', { name: /Bitcoin/ })).toBeNull()
+  const triggerClassName = trigger.className
 
-  fireEvent.click(summary)
-  expect(screen.getByRole('radio', { name: /Bitcoin/ })).not.toBeNull()
+  fireEvent.click(trigger)
+  fireEvent.click(await screen.findByText('Index Fund'))
+
+  const selectedTrigger = await screen.findByRole('button', {
+    name: 'Investment: Index Fund, IDX',
+  })
+  expect(selectedTrigger.className).toBe(triggerClassName)
+
+  fireEvent.click(selectedTrigger)
+  expect(await screen.findByText('Bitcoin')).toBeTruthy()
 })
 
-it('shows investment identity in desktop options and the selected trigger', () => {
+it('shows investment identity in desktop options and the selected trigger', async () => {
   mobileState.value = false
   render(<Picker />)
 
@@ -97,12 +106,8 @@ it('shows investment identity in desktop options and the selected trigger', () =
       name: 'Investment: Select an investment',
     }),
   )
-  expect(document.querySelector('[data-slot="scroll-area"]')).not.toBeNull()
-  fireEvent.click(
-    screen.getByRole('menuitemradio', { name: 'Index Fund, IDX' }),
-  )
+  fireEvent.click(await screen.findByText('Index Fund'))
 
-  expect(screen.queryByRole('menu')).toBeNull()
   expect(
     screen.getByRole('button', { name: 'Investment: Index Fund, IDX' }),
   ).toBeTruthy()

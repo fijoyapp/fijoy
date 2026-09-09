@@ -444,7 +444,7 @@ export function EditTransactionDialog({
         </DialogDescription>
       </DialogHeader>
 
-      <div className="border-border [a]:hover:bg-muted group/item focus-visible:border-ring focus-visible:ring-ring/50 flex w-full flex-wrap items-center rounded-md border text-xs/relaxed transition-colors duration-100 outline-none focus-visible:ring-[3px] [a]:transition-colors">
+      <div className="border-border has-[[data-slot=item]:hover]:border-primary/45 group/item focus-visible:border-ring focus-visible:ring-ring/50 flex w-full flex-wrap items-center overflow-hidden rounded-lg border text-xs/relaxed transition-colors duration-150 outline-none focus-visible:ring-[3px]">
         {sortedItems.map((item, index) =>
           item.type === 'lot' ? (
             <Fragment key={item.lot.id}>

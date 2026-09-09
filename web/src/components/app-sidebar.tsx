@@ -28,7 +28,7 @@ export function AppSidebar({ fragmentRef, ...props }: AppSidebarProps) {
   const data = useFragment(appSidebarFragment, fragmentRef)
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar variant="inset" collapsible="icon" {...props}>
       <SidebarHeader>
         <HouseholdSwitcher fragmentRef={data} />
       </SidebarHeader>

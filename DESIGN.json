@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-05-03T00:00:00Z",
+  "generatedAt": "2026-09-08T00:00:00Z",
   "title": "Design System: Beaver Money",
   "extensions": {
     "colorMeta": {
@@ -342,12 +342,23 @@
         "purpose": "Metadata, badge text, the xs button size, form micro-labels. Use sparingly."
       }
     },
-    "shadows": [],
+    "shadows": [
+      {
+        "name": "surface",
+        "value": "0 1px 2px oklch(0.145 0.005 92 / 0.07)",
+        "purpose": "Opaque ledger cards only. One-pixel ambient depth, never an inset highlight or hover lift."
+      },
+      {
+        "name": "floating-material",
+        "value": "0 1px 2px oklch(0.145 0.005 92 / 0.07), 0 8px 24px oklch(0.145 0.005 92 / 0.14)",
+        "purpose": "Navigation chrome and floating overlays. Always paired with a warm translucent fill and hairline material border."
+      }
+    ],
     "motion": [
       {
-        "name": "transition-all",
-        "value": "all 150ms ease-out",
-        "purpose": "Default for buttons. Color, ring, and translate-y unify under one short transition."
+        "name": "control-feedback",
+        "value": "transform 150ms cubic-bezier(0.22, 1, 0.36, 1), background-color 150ms cubic-bezier(0.22, 1, 0.36, 1), border-color 150ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 150ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Default for pressable controls. Active state may scale to 0.96-0.98."
       },
       {
         "name": "transition-colors",
@@ -357,7 +368,12 @@
       {
         "name": "ease-out-quart",
         "value": "cubic-bezier(0.25, 1, 0.5, 1)",
-        "purpose": "Reserved easing for any motion longer than 150ms (sheet open, drawer slide). No bounce, no elastic."
+        "purpose": "Natural deceleration for sheet, drawer, menu, and dialog transitions. No bounce or elastic."
+      },
+      {
+        "name": "ease-out-quint",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Primary iOS-inspired material easing for controls and floating layers."
       }
     ],
     "breakpoints": [
@@ -373,9 +389,9 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-default",
-      "description": "Primary action button. Beaver Pelt Amber fill with warm-brown text. 28px tall, 12px font, square corners.",
+      "description": "Primary action button. Beaver Pelt Amber fill with warm-brown text. 28px tall, 12px font, 10px corners, and a short 0.97 press scale.",
       "html": "<button class=\"ds-btn-primary\" type=\"button\">Save transaction</button>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 28px; padding: 0 8px; background: oklch(0.852 0.199 91.936); color: oklch(0.421 0.095 57.708); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 12px; font-weight: 500; line-height: 1.625; letter-spacing: 0; border: 1px solid transparent; border-radius: 0; background-clip: padding-box; cursor: pointer; transition: all 150ms ease-out; outline: none; } .ds-btn-primary:hover { background: oklch(0.852 0.199 91.936 / 0.8); } .ds-btn-primary:focus-visible { border-color: oklch(0.708 0.008 92); box-shadow: 0 0 0 2px oklch(0.708 0.008 92 / 0.3); } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 28px; padding: 0 8px; background: oklch(0.852 0.199 91.936); color: oklch(0.421 0.095 57.708); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 12px; font-weight: 500; line-height: 1.625; letter-spacing: 0; border: 1px solid transparent; border-radius: 10px; background-clip: padding-box; cursor: pointer; transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), background-color 150ms cubic-bezier(0.22, 1, 0.36, 1); outline: none; box-shadow: inset 0 1px 0 oklch(1 0.002 92 / 0.38), 0 1px 2px oklch(0.145 0.005 92 / 0.07); } .ds-btn-primary:hover { background: oklch(0.852 0.199 91.936 / 0.8); } .ds-btn-primary:focus-visible { border-color: oklch(0.708 0.008 92); box-shadow: 0 0 0 2px oklch(0.708 0.008 92 / 0.3); } .ds-btn-primary:active { transform: scale(0.97); } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
     },
     {
       "name": "Outline Button",
@@ -383,7 +399,7 @@
       "refersTo": "button-outline",
       "description": "Secondary action. Hairline border on Paper White. The neutral choice for non-destructive secondary CTAs.",
       "html": "<button class=\"ds-btn-outline\" type=\"button\">Cancel</button>",
-      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 28px; padding: 0 8px; background: oklch(1 0.002 92); color: oklch(0.145 0.005 92); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 12px; font-weight: 500; line-height: 1.625; border: 1px solid oklch(0.922 0.005 92); border-radius: 0; cursor: pointer; transition: all 150ms ease-out; outline: none; } .ds-btn-outline:hover { background: oklch(0.922 0.005 92 / 0.5); } .ds-btn-outline:focus-visible { border-color: oklch(0.708 0.008 92); box-shadow: 0 0 0 2px oklch(0.708 0.008 92 / 0.3); } .ds-btn-outline:active { transform: translateY(1px); }"
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 28px; padding: 0 8px; background: oklch(1 0.002 92); color: oklch(0.145 0.005 92); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 12px; font-weight: 500; line-height: 1.625; border: 1px solid oklch(0.922 0.005 92); border-radius: 10px; cursor: pointer; transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), border-color 150ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 150ms cubic-bezier(0.22, 1, 0.36, 1); outline: none; } .ds-btn-outline:hover { border-color: oklch(0.852 0.199 91.936 / 0.45); } .ds-btn-outline:focus-visible { border-color: oklch(0.852 0.199 91.936); box-shadow: 0 0 0 2px oklch(0.852 0.199 91.936 / 0.2); } .ds-btn-outline:active { transform: scale(0.97); }"
     },
     {
       "name": "Ghost Button",
@@ -391,31 +407,31 @@
       "refersTo": "button-ghost",
       "description": "Toolbar / dense-row button. Transparent at rest, fills with a muted background on hover. Used in sidebar items, table-row actions, command bars.",
       "html": "<button class=\"ds-btn-ghost\" type=\"button\"><svg class=\"ds-btn-ghost-icon\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg>New</button>",
-      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 28px; padding: 0 8px; background: transparent; color: oklch(0.145 0.005 92); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 12px; font-weight: 500; line-height: 1.625; border: 1px solid transparent; border-radius: 0; cursor: pointer; transition: all 150ms ease-out; outline: none; } .ds-btn-ghost:hover { background: oklch(0.97 0.005 92); } .ds-btn-ghost:focus-visible { border-color: oklch(0.708 0.008 92); box-shadow: 0 0 0 2px oklch(0.708 0.008 92 / 0.3); } .ds-btn-ghost:active { transform: translateY(1px); } .ds-btn-ghost-icon { flex-shrink: 0; }"
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 28px; padding: 0 8px; background: transparent; color: oklch(0.145 0.005 92); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 12px; font-weight: 500; line-height: 1.625; border: 1px solid transparent; border-radius: 10px; cursor: pointer; transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), background-color 150ms cubic-bezier(0.22, 1, 0.36, 1); outline: none; } .ds-btn-ghost:hover { background: oklch(0.97 0.005 92); } .ds-btn-ghost:focus-visible { border-color: oklch(0.708 0.008 92); box-shadow: 0 0 0 2px oklch(0.708 0.008 92 / 0.3); } .ds-btn-ghost:active { transform: scale(0.97); } .ds-btn-ghost-icon { flex-shrink: 0; }"
     },
     {
       "name": "Text Input",
       "kind": "input",
       "refersTo": "input",
-      "description": "Standard text field. 28px tall, Pencil Grey border, 20% Pencil Grey wash fill. Square corners. Focus shifts the border to Graphite Mid and adds a subtle ring.",
+      "description": "Standard text field. 28px tall with an opaque Paper White fill, Pencil Grey border, and 10px corners. Hover and focus use the shared Beaver Pelt Amber control accent.",
       "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Description\" />",
-      "css": ".ds-input { display: block; width: 100%; min-width: 0; height: 28px; padding: 0 8px; background: oklch(0.922 0.005 92 / 0.2); color: oklch(0.145 0.005 92); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.4; border: 1px solid oklch(0.922 0.005 92); border-radius: 0; outline: none; transition: color 150ms ease-out, background-color 150ms ease-out, border-color 150ms ease-out, box-shadow 150ms ease-out; } .ds-input::placeholder { color: oklch(0.556 0.008 92); } .ds-input:focus-visible { border-color: oklch(0.708 0.008 92); box-shadow: 0 0 0 2px oklch(0.708 0.008 92 / 0.3); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; } .ds-input[aria-invalid=\"true\"] { border-color: oklch(0.577 0.245 27.325); box-shadow: 0 0 0 2px oklch(0.577 0.245 27.325 / 0.2); }"
+      "css": ".ds-input { display: block; width: 100%; min-width: 0; height: 28px; padding: 0 8px; background: oklch(1 0.002 92); color: oklch(0.145 0.005 92); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.4; border: 1px solid oklch(0.922 0.005 92); border-radius: 10px; outline: none; transition: background-color 150ms cubic-bezier(0.25, 1, 0.5, 1), border-color 150ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 150ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-input::placeholder { color: oklch(0.556 0.008 92); } .ds-input:hover { border-color: oklch(0.852 0.199 91.936 / 0.45); } .ds-input:focus-visible { border-color: oklch(0.852 0.199 91.936); box-shadow: 0 0 0 2px oklch(0.852 0.199 91.936 / 0.2); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; } .ds-input[aria-invalid=\"true\"] { border-color: oklch(0.577 0.245 27.325); box-shadow: 0 0 0 2px oklch(0.577 0.245 27.325 / 0.2); }"
     },
     {
       "name": "Card",
       "kind": "card",
       "refersTo": "card",
-      "description": "Default container. Square corners, ring-1 hairline at 10% foreground. No shadow ever.",
+      "description": "Default opaque ledger container. 18px corners, ring-1 hairline at 10% foreground, inset highlight, and one-pixel ambient depth.",
       "html": "<div class=\"ds-card\"><div class=\"ds-card-header\"><div class=\"ds-card-title\">November total</div><div class=\"ds-card-description\">All accounts, USD</div></div><div class=\"ds-card-content ds-card-amount\">$4,283.17</div></div>",
-      "css": ".ds-card { display: flex; flex-direction: column; gap: 16px; padding: 16px 0; background: oklch(1 0.002 92); color: oklch(0.145 0.005 92); border-radius: 0; box-shadow: inset 0 0 0 1px oklch(0.145 0.005 92 / 0.1); overflow: hidden; font-family: 'Inter Variable', system-ui, sans-serif; } .ds-card-header { display: grid; grid-auto-rows: min-content; gap: 4px; padding: 0 16px; } .ds-card-title { font-size: 14px; font-weight: 500; line-height: 1.4; } .ds-card-description { color: oklch(0.556 0.008 92); font-size: 12px; line-height: 1.625; } .ds-card-content { padding: 0 16px; font-size: 12px; line-height: 1.625; } .ds-card-amount { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }"
+      "css": ".ds-card { display: flex; flex-direction: column; gap: 16px; padding: 16px 0; background: oklch(1 0.002 92); color: oklch(0.145 0.005 92); border-radius: 14px; box-shadow: inset 0 0 0 1px oklch(0.145 0.005 92 / 0.1), 0 1px 2px oklch(0.145 0.005 92 / 0.07); overflow: hidden; font-family: 'Inter Variable', system-ui, sans-serif; } .ds-card-header { display: grid; grid-auto-rows: min-content; gap: 4px; padding: 0 16px; } .ds-card-title { font-size: 14px; font-weight: 500; line-height: 1.4; } .ds-card-description { color: oklch(0.556 0.008 92); font-size: 12px; line-height: 1.625; } .ds-card-content { padding: 0 16px; font-size: 12px; line-height: 1.625; } .ds-card-amount { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }"
     },
     {
       "name": "Sidebar Nav Item",
       "kind": "nav",
       "refersTo": "sidebar",
-      "description": "Single sidebar entry. Active state fills with Burnished Gold, the only place that color appears in the chrome.",
+      "description": "Single sidebar entry. Active state uses a neutral Vellum squircle with stronger label weight inside the warm glass enclosure.",
       "html": "<nav class=\"ds-sidebar\"><a class=\"ds-sidebar-item ds-sidebar-item-active\" href=\"#\"><svg class=\"ds-sidebar-icon\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M2 6h20\"/><path d=\"M2 12h20\"/><path d=\"M2 18h20\"/></svg>Transactions</a><a class=\"ds-sidebar-item\" href=\"#\"><svg class=\"ds-sidebar-icon\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 8v4l3 2\"/></svg>Subscriptions</a><a class=\"ds-sidebar-item\" href=\"#\"><svg class=\"ds-sidebar-icon\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 3v18h18\"/><path d=\"m7 14 4-4 4 4 5-5\"/></svg>Investments</a></nav>",
-      "css": ".ds-sidebar { display: flex; flex-direction: column; gap: 1px; padding: 8px; background: oklch(0.985 0.005 92); font-family: 'Inter Variable', system-ui, sans-serif; min-width: 200px; } .ds-sidebar-item { display: inline-flex; align-items: center; gap: 8px; padding: 6px 8px; background: transparent; color: oklch(0.145 0.005 92); font-size: 12px; font-weight: 400; line-height: 1.625; text-decoration: none; border-radius: 0; transition: background-color 150ms ease-out, color 150ms ease-out; } .ds-sidebar-item:hover { background: oklch(0.97 0.005 92); } .ds-sidebar-item-active { background: oklch(0.681 0.162 75.834); color: oklch(0.987 0.026 102.212); font-weight: 500; } .ds-sidebar-item-active:hover { background: oklch(0.681 0.162 75.834); } .ds-sidebar-icon { flex-shrink: 0; }"
+      "css": ".ds-sidebar { display: flex; flex-direction: column; gap: 4px; padding: 8px; background: oklch(0.985 0.008 92 / 0.78); border: 1px solid oklch(1 0.002 92 / 0.72); border-radius: 10px; box-shadow: 0 1px 2px oklch(0.145 0.005 92 / 0.07), 0 8px 24px oklch(0.145 0.005 92 / 0.14); backdrop-filter: blur(24px) saturate(1.45); font-family: 'Inter Variable', system-ui, sans-serif; min-width: 200px; } .ds-sidebar-item { display: inline-flex; align-items: center; gap: 8px; padding: 6px 8px; background: transparent; color: oklch(0.145 0.005 92); font-size: 12px; font-weight: 400; line-height: 1.625; text-decoration: none; border-radius: 8px; transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), background-color 150ms cubic-bezier(0.22, 1, 0.36, 1), color 150ms cubic-bezier(0.22, 1, 0.36, 1); } .ds-sidebar-item:hover { background: oklch(0.97 0.005 92 / 0.7); } .ds-sidebar-item:active { transform: scale(0.98); } .ds-sidebar-item-active { background: oklch(0.681 0.162 75.834 / 0.15); box-shadow: inset 0 0 0 1px oklch(0.681 0.162 75.834 / 0.2); font-weight: 600; } .ds-sidebar-icon { flex-shrink: 0; }"
     },
     {
       "name": "Privacy-Mode Numeric",
@@ -436,11 +452,11 @@
   ],
   "narrative": {
     "northStar": "The Ledger Workshop",
-    "overview": "Beaver Money's interface is a craftsman's bench: tools within reach, columns straight, surfaces uncluttered, a single warm amber that reads as worked wood and brass instrument. Every component earns its space. Numbers are the substance; chrome is the box. The user is logging by hand because logging by hand is the point. The system supports that ritual rather than decorating around it. Density is the policy, not an accident. Default rows are tight, targets are real but compact, and there is no breathing room offered 'to look modern.' The aesthetic lineage runs through Linear, Raycast, Stripe Dashboard, Beancount, and the better personal-finance managers without inheriting their consumer-fintech polish. We sit closer to a measurement instrument than to a marketing page. This system explicitly rejects every visual idiom that signals 'fintech' at a glance: gradient hero metrics, navy-and-gold legacy bank chrome, neon-on-black crypto trading, glassmorphism, soft-pastel SaaS-cream, gamified streaks, and identical icon-heading-text card grids.",
+    "overview": "Beaver Money's interface is a craftsman's ledger set inside a warm, rounded material enclosure: tools within reach, columns straight, surfaces uncluttered, and a single amber that reads as worked wood and brass instrument. Numbers remain the substance. Translucency is reserved for navigation chrome and floating layers, while tables, charts, and financial values stay opaque and precise. Density is still the policy, not an accident. The result pairs iOS-inspired material clarity with the directness of a manually operated ledger.",
     "keyCharacteristics": [
-      "Sharp corners. --radius: 0 is the load-bearing decision; the entire scale collapses to zero.",
+      "Rounded precision. A 10px root radius softens the enclosure while compact controls remain tightly shaped.",
       "Single warm hue (92°) tints every neutral. There is no cool grey anywhere in this product.",
-      "Rings, not shadows. Depth is conveyed by ring-1 ring-foreground/10 and tonal layering.",
+      "Material hierarchy. Opaque ledger surfaces use rings and restrained depth; navigation and overlays use warm translucent glass.",
       "One typeface (Inter Variable). Hierarchy by scale and weight, never by family.",
       "Semantic chart palette is fixed and meaningful. Colors map to account categories, not decoration.",
       "Privacy-mode masking is a first-class state. Every numeric value must support it."
@@ -477,8 +493,8 @@
         "section": "typography"
       },
       {
-        "name": "The No-Shadow Rule",
-        "body": "Drop shadows are forbidden across the product. If a designer believes a surface needs to 'lift,' the answer is a ring border or a tonal-layer adjustment, not a shadow.",
+        "name": "The Earned-Depth Rule",
+        "body": "Ambient shadows and blur belong only to surfaces physically above content: app chrome, popovers, dialogs, sheets, drawers, and the floating action button. Ledger cards get at most a one-pixel ambient shadow plus an inset highlight.",
         "section": "elevation"
       },
       {
@@ -492,18 +508,19 @@
         "section": "components"
       },
       {
-        "name": "The State-By-Color Rule",
-        "body": "State changes (hover, focus, active, disabled, invalid) shift color, ring, and at most a 1px translate. They do not animate scale, blur, opacity-on-translate, or any layout property.",
+        "name": "The State-Motion Rule",
+        "body": "State changes shift color and ring. Pressable controls may scale to 0.96-0.98 for 150ms. Overlays use opacity, scale, and transform for 150-250ms with quart or quint easing. Layout properties are never animated.",
         "section": "components"
       }
     ],
     "dos": [
-      "Do keep --radius: 0. The squared aesthetic is the load-bearing precision signal.",
+      "Do use the 10px root radius consistently. Dense controls resolve to 8px; cards and floating chrome resolve to 14-22px.",
       "Do tint every neutral toward hue 92° with chroma 0.005-0.01.",
       "Do use OKLCH for color values in styles.css. Match the existing token format; never split the source of truth into hex/HSL/RGB.",
       "Do apply font-variant-numeric: tabular-nums to any column of numbers.",
       "Do use the seven-color semantic account palette consistently. Net worth is always green; liabilities are always red; investments are always amber-orange.",
       "Do use ring-1 ring-foreground/10 to give cards an edge.",
+      "Do reserve liquid glass for app chrome and floating layers. Keep ledger content opaque.",
       "Do keep buttons and inputs at h-7 (28px) by default.",
       "Do use Lucide for every icon. Single-family icon set.",
       "Do make privacy-mode masking work for any new financial value rendered.",
@@ -511,7 +528,7 @@
     ],
     "donts": [
       "Don't use #000 or #fff anywhere. Every neutral must carry the warm hue tint.",
-      "Don't introduce box-shadow for elevation. The product is flat with rings; no exceptions.",
+      "Don't use large shadows on inline content. Ambient depth is reserved for genuinely floating layers.",
       "Don't use background-clip: text with a gradient. No gradient text, no gradient hero metrics, no 'background gradient meets soft glow.' Solid colors only.",
       "Don't introduce a second typeface. Inter Variable does all the work. Hierarchy is scale + weight.",
       "Don't add cool greys, slate, navy, or 'cyberpunk' neon. Even the dark theme stays warm-neutral.",
@@ -521,7 +538,7 @@
       "Don't show identical icon-heading-text card grids. The landing page already brushes against this; no further surfaces should adopt the pattern.",
       "Don't imply auto-import is 'coming soon' or that manual entry is a fallback. Manual is the feature; the design must say so.",
       "Don't gamify. No streaks, no confetti, no green/red 'you saved!' dopamine. The reward for logging is the awareness, not the animation.",
-      "Don't use glassmorphism. Backdrop-filter is reserved for the rare case of overlay readability; it is never decorative.",
+      "Don't turn every card into glass. Blur on dense tables, charts, or financial values reduces trust and legibility.",
       "Don't bump default body size up 'to feel more breathable.' Density is the design."
     ]
   }

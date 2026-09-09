@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { controlGroupSurfaceClassName } from '@/components/ui/control-surface'
 import { useState, useCallback, type ComponentPropsWithoutRef } from 'react'
 import { useCurrencyConfig } from '@/hooks/use-currency-config'
 
@@ -85,7 +86,8 @@ export function CurrencyInput({
   return (
     <div
       className={cn(
-        'bg-input/20 dark:bg-input/30 border-input focus-within:border-ring focus-within:ring-ring/30 has-[aria-invalid=true]:ring-destructive/20 dark:has-[aria-invalid=true]:ring-destructive/40 has-[aria-invalid=true]:border-destructive dark:has-[aria-invalid=true]:border-destructive/50 placeholder:text-muted-foreground flex h-7 w-full min-w-0 items-center rounded-md border py-0.5 text-sm transition-colors outline-none focus-within:ring-2 has-[:disabled]:pointer-events-none has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 has-[aria-invalid=true]:ring-2 md:text-xs/relaxed',
+        controlGroupSurfaceClassName,
+        'has-[aria-invalid=true]:ring-destructive/20 dark:has-[aria-invalid=true]:ring-destructive/40 has-[aria-invalid=true]:border-destructive dark:has-[aria-invalid=true]:border-destructive/50 placeholder:text-muted-foreground flex h-7 w-full min-w-0 items-center py-0.5 text-sm has-[:disabled]:pointer-events-none has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 has-[aria-invalid=true]:ring-2 md:text-xs/relaxed',
         className,
       )}
     >

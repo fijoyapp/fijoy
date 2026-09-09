@@ -252,10 +252,10 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
       <div className="min-w-0 pr-2">
         {groups.map((group) => (
           <Fragment key={group.date.toISOString()}>
-            <div className="text-muted-foreground border-border border-t px-1 pt-3 pb-1.5 text-xs/relaxed font-medium tracking-[0.02em] first:border-t-0 first:pt-0">
+            <div className="text-muted-foreground px-1 pt-3 pb-1.5 text-xs/relaxed font-medium tracking-[0.02em] first:pt-0">
               {formatDateHeader(group.date)}
             </div>
-            <ItemGroup>
+            <ItemGroup className="divide-border has-[[data-slot=item]:hover]:border-primary/45 gap-0 divide-y overflow-hidden rounded-lg border transition-colors duration-150">
               {group.transactions.map((transaction) => (
                 <TransactionCard
                   key={transaction.id}

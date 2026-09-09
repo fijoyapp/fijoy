@@ -36,7 +36,7 @@ export function NavProjects({
   const { isMobile, setOpenMobile } = useSidebar()
 
   return (
-    <SidebarGroup className="">
+    <SidebarGroup className="px-1.5 group-data-[collapsible=icon]:px-1">
       {/* <SidebarGroupLabel>Beaver Money</SidebarGroupLabel> */}
       <SidebarMenu>
         {projects.map((item) => (
@@ -61,7 +61,8 @@ export function NavProjects({
                 <Link
                   {...item.link}
                   activeProps={{
-                    className: 'bg-sidebar-accent',
+                    className:
+                      'bg-sidebar-accent text-sidebar-foreground font-semibold',
                   }}
                 >
                   <item.icon />

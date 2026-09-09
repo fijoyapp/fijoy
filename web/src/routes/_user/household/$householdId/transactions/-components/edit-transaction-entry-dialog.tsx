@@ -21,14 +21,6 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox'
-import {
   Item,
   ItemContent,
   ItemDescription,
@@ -43,6 +35,9 @@ import { useCurrency } from '@/hooks/use-currency'
 import { useHousehold } from '@/hooks/use-household'
 import { useDisplayCurrency } from '@/hooks/use-display-currency'
 import { useEffect } from 'react'
+import { useIsMobile } from '@/hooks/use-mobile'
+import { MobileSelectionDrawer } from '@/components/mobile-selection-drawer'
+import { DesktopSelectionPopover } from '@/components/desktop-selection-popover'
 
 const editTransactionEntryDialogUpdateMutation = graphql`
   mutation editTransactionEntryDialogUpdateMutation(
@@ -83,6 +78,14 @@ export type EditEntryAccount = {
   user: { name: string }
 }
 
+const ACCOUNT_GROUPS = [
+  ['liquidity', 'Liquidity'],
+  ['investment', 'Investment'],
+  ['property', 'Property'],
+  ['receivable', 'Receivable'],
+  ['liability', 'Liability'],
+] as const
+
 type EditTransactionEntryDialogProps = {
   entryId: string
   currentAmount: string
@@ -106,6 +109,7 @@ export function EditTransactionEntryDialog({
   const { household } = useHousehold()
   const { displayCurrencyCode } = useDisplayCurrency()
   const { formatCurrencyWithPrivacyMode } = useCurrency()
+  const isMobile = useIsMobile()
 
   const originalSign = parseFloat(currentAmount) < 0 ? -1 : 1
 
@@ -159,7 +163,10 @@ export function EditTransactionEntryDialog({
     if (!accountSelectionAvailable) form.setFieldValue('accountId', '')
   }, [accountSelectionAvailable, form])
 
-  const accountById = new Map(accounts.map((a) => [a.id, a]))
+  const accountGroups = ACCOUNT_GROUPS.map(([type, label]) => ({
+    label,
+    items: accounts.filter((account) => account.type === type),
+  })).filter((group) => group.items.length > 0)
 
   return (
     <>
@@ -187,66 +194,56 @@ export function EditTransactionEntryDialog({
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>Account</FieldLabel>
-                  <Combobox
-                    items={accounts.map((a) => a.id)}
-                    itemToStringLabel={(item) =>
-                      accountById.get(item)?.name ?? ''
-                    }
-                    value={field.state.value}
-                    onValueChange={(value) => field.handleChange(value || '')}
-                  >
-                    <ComboboxInput
-                      data-1p-ignore
-                      id={field.name}
+                  {isMobile ? (
+                    <MobileSelectionDrawer
+                      groups={accountGroups}
                       name={field.name}
+                      value={field.state.value}
+                      label="Account"
                       placeholder="Select an account"
+                      emptyMessage="No accounts available."
+                      getValue={(account) => account.id}
+                      getLabel={(account) => account.name}
+                      renderItem={(account) => (
+                        <EditEntryAccountDetails
+                          account={account}
+                          formattedValue={formatCurrencyWithPrivacyMode({
+                            value: account.value,
+                            currencyCode: account.householdCurrency.code,
+                            liability: account.type === 'liability',
+                          })}
+                        />
+                      )}
+                      onValueChange={field.handleChange}
                       onBlur={field.handleBlur}
-                      aria-invalid={isInvalid}
+                      invalid={isInvalid}
                     />
-                    <ComboboxContent>
-                      <ComboboxEmpty>No items found.</ComboboxEmpty>
-                      <ComboboxList>
-                        {(item: string) => {
-                          const account = accounts.find(
-                            (acc) => acc.id === item,
-                          )
-                          if (!account) return null
-                          return (
-                            <ComboboxItem key={item} value={item}>
-                              <Item size="xs" className="p-0">
-                                <ItemMedia variant="image">
-                                  <Avatar className="size-6">
-                                    <AvatarImage
-                                      src={getLogoDomainURL(account.icon || '')}
-                                      alt={account.icon || 'unknown logo'}
-                                    />
-                                    <AvatarFallback>
-                                      {account.name}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                </ItemMedia>
-                                <ItemContent>
-                                  <ItemTitle>{account.name}</ItemTitle>
-                                  <ItemDescription>
-                                    <span className="tabular-nums">
-                                      {formatCurrencyWithPrivacyMode({
-                                        value: account.value,
-                                        currencyCode:
-                                          account.householdCurrency.code,
-                                        liability: account.type === 'liability',
-                                      })}
-                                    </span>
-                                    <span aria-hidden="true"> · </span>
-                                    {account.user.name}
-                                  </ItemDescription>
-                                </ItemContent>
-                              </Item>
-                            </ComboboxItem>
-                          )
-                        }}
-                      </ComboboxList>
-                    </ComboboxContent>
-                  </Combobox>
+                  ) : (
+                    <DesktopSelectionPopover
+                      groups={accountGroups}
+                      name={field.name}
+                      value={field.state.value}
+                      label="Account"
+                      placeholder="Select an account"
+                      emptyMessage="No accounts available."
+                      getValue={(account) => account.id}
+                      getLabel={(account) => account.name}
+                      renderItem={(account) => (
+                        <EditEntryAccountDetails
+                          account={account}
+                          formattedValue={formatCurrencyWithPrivacyMode({
+                            value: account.value,
+                            currencyCode: account.householdCurrency.code,
+                            liability: account.type === 'liability',
+                          })}
+                        />
+                      )}
+                      onValueChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      invalid={isInvalid}
+                      triggerClassName="h-12 justify-start p-2"
+                    />
+                  )}
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               )
@@ -300,5 +297,34 @@ export function EditTransactionEntryDialog({
         </Button>
       </DialogFooter>
     </>
+  )
+}
+
+function EditEntryAccountDetails({
+  account,
+  formattedValue,
+}: {
+  account: EditEntryAccount
+  formattedValue: string
+}) {
+  return (
+    <Item size="xs" className="min-w-0 flex-1 border-0 p-0">
+      <ItemMedia variant="image">
+        <Avatar className="size-6">
+          {account.icon && (
+            <AvatarImage src={getLogoDomainURL(account.icon)} alt="" />
+          )}
+          <AvatarFallback>{account.name}</AvatarFallback>
+        </Avatar>
+      </ItemMedia>
+      <ItemContent className="min-w-0 gap-0">
+        <ItemTitle>{account.name}</ItemTitle>
+        <ItemDescription>
+          <span className="tabular-nums">{formattedValue}</span>
+          <span aria-hidden="true"> · </span>
+          {account.user.name}
+        </ItemDescription>
+      </ItemContent>
+    </Item>
   )
 }
