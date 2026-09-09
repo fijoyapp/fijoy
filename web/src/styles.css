@@ -11,15 +11,6 @@
  * rounded, translucent chrome system inspired by iOS material layering.
  */
 :root {
-  --safe-area-inset-top: env(safe-area-inset-top, 0px);
-  --safe-area-inset-right: env(safe-area-inset-right, 0px);
-  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-area-inset-left: env(safe-area-inset-left, 0px);
-  --viewport-height: 100dvh;
-  --safe-viewport-height: calc(
-    var(--viewport-height) - var(--safe-area-inset-top) -
-      var(--safe-area-inset-bottom)
-  );
   --background: oklch(1 0.002 92); /* Paper White */
   --foreground: oklch(0.145 0.005 92); /* Ink Near-Black */
   --card: oklch(1 0.002 92); /* Paper White */
@@ -120,17 +111,6 @@
   --sidebar-ring: oklch(0.556 0.008 92); /* Ink Mid */
 }
 
-/*
- * WebKit can initialize dynamic viewport units incorrectly when a Home Screen
- * app cold-starts. Standalone mode has no browser toolbar, so 100vh is stable;
- * regular Safari keeps 100dvh so its expanding toolbar is still accounted for.
- */
-@media (display-mode: standalone) {
-  :root {
-    --viewport-height: 100vh;
-  }
-}
-
 @theme inline {
   --font-sans: 'Inter Variable', sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -187,23 +167,6 @@
   }
   body {
     @apply bg-background text-foreground relative font-sans;
-    min-height: var(--viewport-height);
-    padding: var(--safe-area-inset-top) var(--safe-area-inset-right)
-      var(--safe-area-inset-bottom) var(--safe-area-inset-left);
-  }
-  body::after {
-    position: fixed;
-    z-index: 100;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: var(--safe-area-inset-bottom);
-    background: var(--background);
-    pointer-events: none;
-    content: '';
-  }
-  #app {
-    min-height: var(--safe-viewport-height);
   }
   html {
     @apply font-sans;

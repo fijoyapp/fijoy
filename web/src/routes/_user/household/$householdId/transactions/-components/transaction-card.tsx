@@ -96,7 +96,7 @@ export function TransactionCard({
       onPointerEnter={() => onPreload(data.id)}
       onFocus={() => onPreload(data.id)}
       onClick={() => onPreload(data.id)}
-      className="group/item focus-visible:border-primary focus-visible:ring-primary/25 bg-background flex w-full flex-wrap items-center rounded-none border-0 text-xs/relaxed outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset"
+      className="group/item border-border focus-visible:border-primary focus-visible:ring-primary/25 bg-background hover:border-primary/45 flex w-full flex-wrap items-center overflow-hidden rounded-lg border text-xs/relaxed transition-colors duration-150 outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset"
     >
       {sortedItems.map((item, index) =>
         item.type === 'lot' ? (

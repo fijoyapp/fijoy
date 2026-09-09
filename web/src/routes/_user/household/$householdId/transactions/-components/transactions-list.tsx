@@ -52,7 +52,6 @@ import {
 import { TransactionDialogPreview } from './transaction-dialog-preview'
 import type { transactionDialogPreviewFragment$key } from './__generated__/transactionDialogPreviewFragment.graphql'
 import { useHouseholdViewScope } from '@/hooks/use-household-view-scope'
-import { MobileActionDockSpacer } from '@/components/app-action-dock'
 
 const transactionsListFragment = graphql`
   fragment transactionsListFragment on Household
@@ -248,14 +247,14 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
       onPreloadTransaction={preloadTransaction}
     />
   ) : (
-    <ScrollArea className="min-h-0 min-w-0 flex-1">
+    <ScrollArea className="min-h-0 min-w-0 flex-1 overflow-hidden [&_[data-slot=scroll-area-viewport]]:overflow-x-hidden">
       <div className="min-w-0 pr-2">
         {groups.map((group) => (
           <Fragment key={group.date.toISOString()}>
             <div className="text-muted-foreground px-1 pt-3 pb-1.5 text-xs/relaxed font-medium tracking-[0.02em] first:pt-0">
               {formatDateHeader(group.date)}
             </div>
-            <ItemGroup className="divide-border has-[[data-slot=item]:hover]:border-primary/45 gap-0 divide-y overflow-hidden rounded-lg border transition-colors duration-150">
+            <ItemGroup className="gap-2">
               {group.transactions.map((transaction) => (
                 <TransactionCard
                   key={transaction.id}
@@ -283,7 +282,6 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
           </div>
         )}
         <div ref={ref}></div>
-        <MobileActionDockSpacer />
       </div>
     </ScrollArea>
   )

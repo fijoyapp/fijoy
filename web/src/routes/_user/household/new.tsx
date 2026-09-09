@@ -81,7 +81,7 @@ function getLocaleDisplayName(locale: string, currencyCode: string): string {
 
 function RouteComponent() {
   return (
-    <div className="flex min-h-[var(--safe-viewport-height)] flex-col items-center justify-center gap-4 p-4">
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-4 p-4">
       <NewHouseholdForm />
     </div>
   )
