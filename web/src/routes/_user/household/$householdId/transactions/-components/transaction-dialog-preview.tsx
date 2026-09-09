@@ -236,7 +236,7 @@ export function TransactionDialogPreview({
           <FieldGroup>
             <PreviewField label="Description" />
             <PreviewField label="Date" />
-            <PreviewField label="Category" controlClassName="h-9" />
+            <PreviewField label="Category" controlClassName="h-11 md:h-9" />
             <FieldSet data-slot="transaction-dialog-preview-field">
               <FieldLegend variant="label">Options</FieldLegend>
               <FieldGroup data-slot="checkbox-group">
