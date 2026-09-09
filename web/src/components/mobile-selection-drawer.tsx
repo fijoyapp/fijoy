@@ -90,7 +90,7 @@ export function MobileSelectionDrawer<T>({
         )}
         <ChevronDownIcon className="size-4 shrink-0" aria-hidden="true" />
       </DrawerTrigger>
-      <DrawerContent className="h-[min(70svh,36rem)]">
+      <DrawerContent className="h-[min(55dvh,28rem)]">
         <DrawerHeader className="text-left">
           <DrawerTitle>Select {label.toLowerCase()}</DrawerTitle>
           <DrawerDescription>
