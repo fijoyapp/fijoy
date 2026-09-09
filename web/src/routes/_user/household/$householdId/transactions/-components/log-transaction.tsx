@@ -109,13 +109,13 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
   return (
     <Item
       ref={panelRef}
-      className="h-full min-h-0 w-full flex-col flex-nowrap items-stretch gap-0 overflow-hidden p-0"
+      className="h-full min-h-0 w-full flex-col flex-nowrap items-stretch gap-0 overflow-hidden rounded-none border-0 p-0 [&_[data-slot=card]]:rounded-none [&_[data-slot=card]]:shadow-none [&_[data-slot=card]]:ring-0"
     >
-      <div className="bg-muted flex w-full shrink-0 items-center gap-3 px-4 py-3">
+      <div className="bg-muted/65 border-border flex w-full shrink-0 items-center gap-1.5 border-b px-2 py-2.5 sm:gap-2 sm:px-4">
         <div
           role="group"
           aria-label="Transaction kind"
-          className="border-border divide-border flex shrink-0 divide-x border"
+          className="bg-background/80 ring-border flex shrink-0 gap-0.5 rounded-lg p-0.5 ring-1"
         >
           {MODES.map((m) => {
             const active = mode === m.value
@@ -126,10 +126,10 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
                 aria-pressed={active}
                 onClick={() => handleModeChange(m.value)}
                 className={cn(
-                  'focus-visible:ring-ring/30 inline-flex h-6 cursor-pointer items-center justify-center px-2.5 text-xs font-medium transition-colors outline-none focus-visible:ring-2',
+                  'focus-visible:ring-ring/30 inline-flex h-7 cursor-pointer items-center justify-center rounded-md px-2 text-xs font-medium transition-colors outline-none focus-visible:ring-2 sm:px-2.5',
                   active
-                    ? 'bg-background text-foreground'
-                    : 'hover:text-foreground hover:bg-background/50 text-muted-foreground',
+                    ? 'bg-foreground text-background'
+                    : 'hover:text-foreground hover:bg-muted text-muted-foreground',
                 )}
               >
                 {m.label}
@@ -138,15 +138,14 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
           })}
         </div>
 
-        <div aria-hidden className="bg-border h-4 w-px shrink-0" />
-
         <ScrollArea className="min-w-0 flex-1">
-          <div className="flex gap-2 py-px">
+          <div className="flex gap-1 px-px py-px sm:gap-1.5">
             {visibleTypes.map((t) => (
               <Button
                 key={t}
                 size="sm"
                 variant={selectedType === t ? 'default' : 'outline'}
+                className="h-8 rounded-lg px-2.5 sm:px-3"
                 onClick={() => setType(t)}
               >
                 {TYPE_LABELS[t]}

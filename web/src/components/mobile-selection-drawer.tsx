@@ -13,6 +13,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer'
+import { cn } from '@/lib/utils'
+import { controlSurfaceClassName } from '@/components/ui/control-surface'
 
 type MobileSelectionDrawerProps<T> = {
   groups: ReadonlyArray<SelectionGroup<T>>
@@ -28,6 +30,7 @@ type MobileSelectionDrawerProps<T> = {
   onBlur: () => void
   invalid: boolean
   disabled?: boolean
+  triggerClassName?: string
 }
 
 export function MobileSelectionDrawer<T>({
@@ -44,6 +47,7 @@ export function MobileSelectionDrawer<T>({
   onBlur,
   invalid,
   disabled = false,
+  triggerClassName,
 }: MobileSelectionDrawerProps<T>) {
   const [open, setOpen] = useState(false)
   const items = groups.flatMap((group) => group.items)
@@ -67,7 +71,11 @@ export function MobileSelectionDrawer<T>({
             disabled={disabled}
             aria-invalid={invalid}
             aria-label={`${label}: ${selected ? getLabel(selected) : placeholder}`}
-            className="border-input bg-input/20 focus-visible:outline-ring dark:bg-input/30 flex min-h-11 w-full items-center gap-2 border p-2 text-left focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className={cn(
+              controlSurfaceClassName,
+              'flex min-h-11 w-full appearance-none items-center gap-2 px-3 py-2 text-left shadow-none disabled:cursor-not-allowed disabled:opacity-50',
+              triggerClassName,
+            )}
           />
         }
       >
@@ -76,7 +84,7 @@ export function MobileSelectionDrawer<T>({
             {renderItem(selected)}
           </span>
         ) : (
-          <span className="text-muted-foreground min-w-0 flex-1 truncate text-xs">
+          <span className="text-muted-foreground min-w-0 flex-1 truncate text-sm">
             {placeholder}
           </span>
         )}

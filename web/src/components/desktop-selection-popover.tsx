@@ -69,7 +69,7 @@ export function DesktopSelectionPopover<T>({
             aria-invalid={invalid}
             aria-label={`${label}: ${selected ? getLabel(selected) : placeholder}`}
             className={cn(
-              'bg-input/20 dark:bg-input/30 h-auto min-h-9 w-full justify-between gap-2 px-2 py-1.5 text-left font-normal',
+              'h-auto min-h-9 w-full justify-between gap-2 px-2.5 py-1.5 text-left font-normal shadow-none',
               triggerClassName,
             )}
           />

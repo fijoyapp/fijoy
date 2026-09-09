@@ -63,7 +63,7 @@ export function InvestmentLotCard({
       className={cn(
         !isFirst && 'rounded-t-none border-t-0',
         !isLast && 'rounded-b-none',
-        onClick && 'hover:bg-muted cursor-pointer',
+        onClick && 'cursor-pointer',
       )}
       key={data.id}
       id={data.id}

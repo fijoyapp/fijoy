@@ -44,7 +44,7 @@ export function ViewScopeSwitcher() {
         render={
           <Button
             variant="ghost"
-            className="h-10 cursor-pointer gap-1 rounded-none border-0 bg-clip-border px-3 text-xs"
+            className="h-9 cursor-pointer gap-1 rounded-lg border-0 bg-clip-border px-3 text-xs"
             data-testid="view-scope-switcher-trigger"
           >
             {showsAll ? (

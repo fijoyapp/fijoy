@@ -267,6 +267,26 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
     return capitalize(key)
   }
 
+  const allocationSummary = visibleGroups.map(({ key, accounts }) => {
+    const total = accounts.reduce(
+      (groupTotal, account) => groupTotal.add(account.displayValue),
+      currency(0),
+    )
+    const groupTypes = new Set(accounts.map(({ node }) => node.type))
+    const accentClass =
+      groupTypes.size === 1
+        ? (ACCOUNT_TYPE_ACCENT_CLASSES[[...groupTypes][0]] ?? 'bg-chart-2')
+        : 'bg-chart-2'
+    const { share } = getAccountGroupAllocation(total.value, assetsTotal)
+
+    return {
+      key,
+      label: getGroupLabel(key),
+      share,
+      accentClass,
+    }
+  })
+
   const formattedDisplayValue = formatCurrencyWithPrivacyMode({
     value: displayOptions[displayIndex].value,
     currencyCode: displayCurrencyCode,
@@ -393,78 +413,101 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
 
       <div className="py-2" />
       {visibleGroups.length > 0 ? (
-        <Accordion
-          key={groupByOption}
-          multiple
-          className="ring-foreground/10 overflow-visible border-0 ring-1"
-          defaultValue={visibleGroups.map(({ key }) => key)}
-        >
-          {visibleGroups.map(({ key, accounts }) => {
-            const groupTotal = accounts.reduce(
-              (total, account) => total.add(account.displayValue),
-              currency(0),
-            )
-            const isLiabilityGroup = accounts.every(
-              ({ node }) => node.type === 'liability',
-            )
-            const { share: groupShare, basis: allocationBasis } =
-              getAccountGroupAllocation(groupTotal.value, assetsTotal)
-            const groupTypes = new Set(accounts.map(({ node }) => node.type))
-            const groupAccentClass =
-              groupTypes.size === 1
-                ? (ACCOUNT_TYPE_ACCENT_CLASSES[[...groupTypes][0]] ??
-                  'bg-chart-2')
-                : 'bg-chart-2'
-            const groupShareLabel = `${formatPercentageWithPrivacyMode(
-              groupShare,
-              household.locale,
-              isPrivacyModeEnabled,
-            )} of ${allocationBasis}`
-
-            return (
-              <AccordionItem
-                value={key}
-                key={key}
-                className="data-open:bg-transparent"
-              >
-                <AccountGroupTrigger
-                  label={getGroupLabel(key)}
-                  total={formatCurrencyWithPrivacyMode({
-                    value: groupTotal,
-                    currencyCode: displayCurrencyCode,
-                    liability: isLiabilityGroup,
-                  })}
-                  share={groupShare}
-                  shareLabel={groupShareLabel}
-                  accentClass={groupAccentClass}
-                  hideAllocation={isPrivacyModeEnabled}
-                />
-                <AccordionContent className="-mx-2 pb-0">
-                  <AccountLedgerColumnHeader
-                    displayCurrencyCode={displayCurrencyCode}
+        <>
+          <section
+            aria-labelledby="account-allocation-title"
+            className="border-border bg-muted/35 mb-3 rounded-lg border px-3 py-2.5"
+          >
+            <h2
+              id="account-allocation-title"
+              className="text-muted-foreground mb-2 text-[0.625rem] font-semibold tracking-[0.08em] uppercase"
+            >
+              Account allocation
+            </h2>
+            <ul className="flex flex-wrap gap-x-5 gap-y-2">
+              {allocationSummary.map((group) => (
+                <li
+                  key={group.key}
+                  className="flex min-w-28 items-center gap-2"
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn('size-2 shrink-0', group.accentClass)}
                   />
-                  <div
-                    role="list"
-                    aria-label={`${getGroupLabel(key)} accounts`}
-                  >
-                    {accounts.map((account) => (
-                      <AccountLedgerRow
-                        key={account.node.id}
-                        fragmentRef={account.node}
-                        displayValue={account.displayValue}
-                        displayCurrencyCode={displayCurrencyCode}
-                        share={calculateAllocationPercentage(
-                          account.displayValue.value,
-                          groupTotal.value,
-                        )}
-                      />
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            )
-          })}
-        </Accordion>
+                  <span className="text-xs font-medium">{group.label}</span>
+                  <span className="ml-auto text-sm font-semibold tabular-nums">
+                    {formatPercentageWithPrivacyMode(
+                      group.share,
+                      household.locale,
+                      isPrivacyModeEnabled,
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+          <Accordion
+            key={groupByOption}
+            multiple
+            className="ring-foreground/10 overflow-hidden rounded-xl border-0 ring-1"
+            defaultValue={visibleGroups.map(({ key }) => key)}
+          >
+            {visibleGroups.map(({ key, accounts }) => {
+              const groupTotal = accounts.reduce(
+                (total, account) => total.add(account.displayValue),
+                currency(0),
+              )
+              const isLiabilityGroup = accounts.every(
+                ({ node }) => node.type === 'liability',
+              )
+              const groupTypes = new Set(accounts.map(({ node }) => node.type))
+              const groupAccentClass =
+                groupTypes.size === 1
+                  ? (ACCOUNT_TYPE_ACCENT_CLASSES[[...groupTypes][0]] ??
+                    'bg-chart-2')
+                  : 'bg-chart-2'
+              return (
+                <AccordionItem
+                  value={key}
+                  key={key}
+                  className="data-open:bg-transparent"
+                >
+                  <AccountGroupTrigger
+                    label={getGroupLabel(key)}
+                    total={formatCurrencyWithPrivacyMode({
+                      value: groupTotal,
+                      currencyCode: displayCurrencyCode,
+                      liability: isLiabilityGroup,
+                    })}
+                    accentClass={groupAccentClass}
+                  />
+                  <AccordionContent className="-mx-2 pb-0">
+                    <AccountLedgerColumnHeader
+                      displayCurrencyCode={displayCurrencyCode}
+                    />
+                    <div
+                      role="list"
+                      aria-label={`${getGroupLabel(key)} accounts`}
+                    >
+                      {accounts.map((account) => (
+                        <AccountLedgerRow
+                          key={account.node.id}
+                          fragmentRef={account.node}
+                          displayValue={account.displayValue}
+                          displayCurrencyCode={displayCurrencyCode}
+                          share={calculateAllocationPercentage(
+                            account.displayValue.value,
+                            groupTotal.value,
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              )
+            })}
+          </Accordion>
+        </>
       ) : (
         <Empty className="border py-10">
           <EmptyHeader>
@@ -529,54 +572,32 @@ function AccountLedgerColumnHeader({
 type AccountGroupTriggerProps = {
   label: string
   total: string
-  share: number
-  shareLabel: string
   accentClass: string
-  hideAllocation: boolean
 }
 
 function AccountGroupTrigger({
   label,
   total,
-  share,
-  shareLabel,
   accentClass,
-  hideAllocation,
 }: AccountGroupTriggerProps) {
-  const allocationWidth = hideAllocation ? 0 : Math.min(100, Math.max(0, share))
-
   return (
     <AccordionPrimitive.Header className="sticky top-0 z-10 flex">
-      <AccordionPrimitive.Trigger className="group/account-group bg-muted hover:bg-input/50 focus-visible:border-ring focus-visible:ring-ring/30 dark:bg-card dark:hover:bg-input relative grid min-h-11 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 border border-transparent py-1.5 pr-10 pl-3 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50">
+      <AccordionPrimitive.Trigger className="group/account-group bg-muted hover:bg-input/50 focus-visible:border-primary focus-visible:ring-primary/20 dark:bg-card dark:hover:bg-input grid min-h-12 flex-1 grid-cols-[minmax(0,1fr)_auto_1.75rem] items-center gap-x-3 border border-transparent px-3 py-2.5 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50">
         <span className="flex min-w-0 items-center gap-2">
           <span
             aria-hidden="true"
             className={cn('size-2 shrink-0', accentClass)}
           />
-          <span className="truncate text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
+          <span className="truncate text-sm font-semibold tracking-[0.06em] uppercase">
             {label}
           </span>
         </span>
-        <span className="row-span-2 text-right text-base leading-none font-semibold tracking-tight tabular-nums lg:text-sm">
+        <span className="min-w-28 text-right text-base leading-none font-semibold tracking-tight tabular-nums lg:text-sm">
           {total}
         </span>
-        <span className="text-muted-foreground absolute top-1/2 right-3 flex size-5 -translate-y-1/2 items-center justify-center">
+        <span className="text-muted-foreground group-hover/account-group:bg-background/70 flex size-7 items-center justify-center rounded-md transition-colors">
           <ChevronDownIcon className="pointer-events-none size-4 group-aria-expanded/account-group:hidden" />
           <ChevronUpIcon className="pointer-events-none hidden size-4 group-aria-expanded/account-group:block" />
-        </span>
-        <span className="col-span-2 col-start-1 flex min-w-0 items-center gap-2">
-          <span
-            aria-hidden="true"
-            className="bg-border block h-1 min-w-0 flex-1 overflow-hidden"
-          >
-            <span
-              className={cn('block h-full', accentClass)}
-              style={{ width: `${allocationWidth}%` }}
-            />
-          </span>
-          <span className="text-muted-foreground shrink-0 text-[0.625rem] tabular-nums">
-            {shareLabel}
-          </span>
         </span>
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>

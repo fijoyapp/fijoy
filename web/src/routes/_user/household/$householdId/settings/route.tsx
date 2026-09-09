@@ -84,7 +84,7 @@ function RouteComponent() {
                 key={label}
                 params={params}
                 className={cn(
-                  'text-muted-foreground hover:bg-muted focus-visible:outline-ring px-2.5 py-1 text-xs/relaxed font-medium transition-colors focus-visible:outline-2',
+                  'text-muted-foreground hover:bg-muted focus-visible:outline-ring rounded-lg px-2.5 py-1 text-xs/relaxed font-medium transition-colors focus-visible:outline-2',
                   '',
                 )}
                 activeProps={{

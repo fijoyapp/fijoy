@@ -241,18 +241,17 @@ function RouteComponent() {
               <CommandMenu />
               <SidebarProvider className="h-[var(--safe-viewport-height)] min-h-0 overflow-hidden">
                 <AppSidebar fragmentRef={data} />
-                <SidebarInset className="h-[var(--safe-viewport-height)] min-h-0 overflow-hidden">
-                  <header className="bg-background sticky top-0 z-10 flex h-10 shrink-0 items-stretch border-b transition-[width,height] ease-linear">
-                    <SidebarTrigger className="cursor-pointer border-r" />
+                <SidebarInset className="h-[var(--safe-viewport-height)] min-h-0 overflow-hidden md:h-[calc(var(--safe-viewport-height)-1rem)]">
+                  <header className="liquid-glass-chrome z-30 mx-2 mt-2 flex h-11 shrink-0 items-center rounded-xl p-1 transition-[width,height] duration-200 ease-[var(--ease-out-quint)]">
+                    <SidebarTrigger className="cursor-pointer" />
                     <div className="flex flex-1 items-center px-3">
                       <Breadcrumb>
                         <BreadcrumbList></BreadcrumbList>
                       </Breadcrumb>
                     </div>
-                    <div className="border-border flex divide-x divide-solid">
-                      <div className="border-y-0" />
+                    <div className="flex items-center gap-0.5">
                       {!isOnSettingsPage && (
-                        <div className="border-y-0">
+                        <div>
                           <ViewScopeSwitcher />
                         </div>
                       )}
@@ -262,7 +261,7 @@ function RouteComponent() {
                             render={
                               <Button
                                 variant="ghost"
-                                className="h-10 cursor-pointer rounded-none border-0 bg-clip-border px-2 font-mono text-xs"
+                                className="h-9 cursor-pointer rounded-lg border-0 bg-clip-border px-2 font-mono text-xs"
                               >
                                 {activeCurrencyCode || 'Currency'}
                               </Button>
@@ -284,13 +283,13 @@ function RouteComponent() {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       )}
-                      <div className="border-y-0">
+                      <div>
                         <SnapshotDialog fragmentRef={data.household} />
                       </div>
-                      <div className="hidden border-y-0 md:block">
+                      <div className="hidden md:block">
                         <Button
                           variant="ghost"
-                          className="size-10 shrink-0 cursor-pointer rounded-none border-0 bg-clip-border"
+                          className="size-9 shrink-0 cursor-pointer rounded-lg border-0 bg-clip-border"
                           onClick={handleRefreshAccountData}
                           disabled={isRefreshInFlight}
                           aria-label="Refresh account data"
@@ -305,7 +304,7 @@ function RouteComponent() {
                           render={
                             <Button
                               variant="ghost"
-                              className="size-10 shrink-0 cursor-pointer rounded-none border-0 bg-clip-border"
+                              className="size-9 shrink-0 cursor-pointer rounded-lg border-0 bg-clip-border"
                             >
                               <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
                               <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
@@ -327,8 +326,13 @@ function RouteComponent() {
                       </DropdownMenu>
                       <Button
                         variant="ghost"
-                        className="size-10 shrink-0 cursor-pointer rounded-none border-0 bg-clip-border"
+                        className="size-9 shrink-0 cursor-pointer rounded-lg border-0 bg-clip-border"
                         onClick={togglePrivacyMode}
+                        aria-label={
+                          isPrivacyModeEnabled
+                            ? 'Show financial values'
+                            : 'Hide financial values'
+                        }
                       >
                         {isPrivacyModeEnabled ? <EyeIcon /> : <EyeOffIcon />}
                       </Button>
@@ -391,7 +395,7 @@ function FloatingLogTransactionWindow({
       {logTransactionType && (
         <Item
           className={cn(
-            'bg-muted h-full w-full gap-0 overflow-hidden p-0 shadow-2xl',
+            'liquid-glass-popover h-full w-full gap-0 overflow-hidden rounded-2xl p-0',
           )}
         >
           <div className="drag-handle flex w-full cursor-move items-center justify-between border-b px-4 py-2">

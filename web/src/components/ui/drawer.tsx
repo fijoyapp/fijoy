@@ -70,7 +70,7 @@ function DrawerOverlay({
     <DrawerPrimitive.Backdrop
       data-slot="drawer-overlay"
       className={cn(
-        'fixed inset-0 z-50 min-h-dvh bg-black/80 opacity-[max(var(--drawer-overlay-min-opacity,0),calc(1-var(--drawer-swipe-progress)))] transition-opacity duration-450 ease-[cubic-bezier(0.32,0.72,0,1)] select-none data-ending-style:pointer-events-none data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] data-snap-points:[--drawer-overlay-min-opacity:0.5] data-starting-style:opacity-0 data-swiping:duration-0 supports-backdrop-filter:backdrop-blur-xs supports-[-webkit-touch-callout:none]:absolute',
+        'liquid-glass-scrim fixed inset-0 z-50 min-h-dvh opacity-[max(var(--drawer-overlay-min-opacity,0),calc(1-var(--drawer-swipe-progress)))] transition-opacity duration-450 ease-[cubic-bezier(0.32,0.72,0,1)] select-none data-ending-style:pointer-events-none data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] data-snap-points:[--drawer-overlay-min-opacity:0.5] data-starting-style:opacity-0 data-swiping:duration-0 supports-[-webkit-touch-callout:none]:absolute',
         className,
       )}
       {...props}
@@ -120,7 +120,7 @@ function DrawerContent({
           data-snap-points={hasSnapPoints ? '' : undefined}
           className={cn(
             // Base.
-            'group/drawer-popup border-popover bg-popover text-popover-foreground dark:border-border pointer-events-auto fixed z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) transform-[translate3d(var(--translate-x,0px),var(--translate-y,0px),0)_scale(var(--stack-scale))] flex-col rounded-xl border text-xs/relaxed transition-[transform,height,opacity,filter] duration-450 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform outline-none select-none [--drawer-bleed-background:transparent] [--drawer-inset:--spacing(2)] [interpolate-size:allow-keywords]',
+            'group/drawer-popup border-border bg-background text-foreground pointer-events-auto fixed z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) transform-[translate3d(var(--translate-x,0px),var(--translate-y,0px),0)_scale(var(--stack-scale))] flex-col rounded-2xl border text-xs/relaxed shadow-[0_8px_24px_var(--glass-shadow-color)] transition-[transform,height,opacity,filter] duration-450 ease-[var(--ease-out-quint)] will-change-transform outline-none select-none [--drawer-bleed-background:var(--background)] [--drawer-inset:--spacing(2)] [interpolate-size:allow-keywords]',
             // Nested.
             'data-nested-drawer-open:overflow-hidden data-nested-drawer-open:brightness-95',
             // Bleed.
@@ -167,7 +167,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="drawer-header"
       className={cn(
-        'flex shrink-0 flex-col gap-1 p-4 pb-0 group-data-[swipe-axis=y]/drawer-popup:text-center md:text-left',
+        'border-border bg-background flex shrink-0 flex-col gap-1 border-b p-4 pt-2.5 pb-3 group-data-[swipe-axis=y]/drawer-popup:text-center md:text-left',
         className,
       )}
       {...props}

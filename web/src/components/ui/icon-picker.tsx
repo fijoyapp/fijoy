@@ -94,22 +94,25 @@ const IconPicker = React.forwardRef<
   React.ComponentRef<typeof PopoverTrigger>,
   IconPickerProps
 >(
-  ({
-    value,
-    defaultValue,
-    onValueChange,
-    open,
-    defaultOpen,
-    onOpenChange,
-    children,
-    searchable = true,
-    searchPlaceholder = 'Search for an icon...',
-    triggerPlaceholder = 'Select an icon',
-    iconsList,
-    categorized = true,
-    modal = false,
-    ...props
-  }) => {
+  (
+    {
+      value,
+      defaultValue,
+      onValueChange,
+      open,
+      defaultOpen,
+      onOpenChange,
+      children,
+      searchable = true,
+      searchPlaceholder = 'Search for an icon...',
+      triggerPlaceholder = 'Select an icon',
+      iconsList,
+      categorized = true,
+      modal = false,
+      ...props
+    },
+    ref,
+  ) => {
     const [selectedIcon, setSelectedIcon] = useState<IconName | undefined>(
       defaultValue,
     )
@@ -416,19 +419,19 @@ const IconPicker = React.forwardRef<
         onOpenChange={handleOpenChange}
         modal={modal}
       >
-        <PopoverTrigger {...props}>
-          {children || (
-            <Button variant="outline">
-              {value || selectedIcon ? (
-                <>
-                  <Icon name={(value || selectedIcon)!} />{' '}
-                  {value || selectedIcon}
-                </>
-              ) : (
-                triggerPlaceholder
-              )}
-            </Button>
-          )}
+        <PopoverTrigger
+          {...props}
+          ref={ref}
+          render={<Button variant="outline" />}
+        >
+          {children ||
+            (value || selectedIcon ? (
+              <>
+                <Icon name={(value || selectedIcon)!} /> {value || selectedIcon}
+              </>
+            ) : (
+              triggerPlaceholder
+            ))}
         </PopoverTrigger>
         <PopoverContent className="w-64 p-2">
           {searchable && (

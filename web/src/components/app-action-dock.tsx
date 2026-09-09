@@ -27,7 +27,7 @@ export function AppActionDock({
   if (!isMobile) {
     return (
       <Button
-        className="fixed right-4 bottom-4 z-20 size-10 rounded-none [&_svg:not([class*='size-'])]:size-5"
+        className="fixed right-5 bottom-5 z-20 size-11 rounded-2xl shadow-[0_10px_28px_var(--glass-shadow-color)] [&_svg:not([class*='size-'])]:size-5"
         onClick={() => openLogTransaction('expense')}
         aria-label="New entry"
         title="New entry"
@@ -38,17 +38,17 @@ export function AppActionDock({
   }
 
   return (
-    <div className="pointer-events-none fixed right-[var(--safe-area-inset-right)] bottom-[calc(var(--safe-area-inset-bottom)+0.75rem)] left-[var(--safe-area-inset-left)] z-40 md:hidden">
+    <div className="pointer-events-none fixed right-[var(--safe-area-inset-right)] bottom-[calc(var(--safe-area-inset-bottom)+1rem)] left-[var(--safe-area-inset-left)] z-40 md:hidden">
       <nav
         aria-label="Quick actions"
-        className="bg-background/90 ring-foreground/15 pointer-events-auto mx-auto grid h-14 w-[90%] grid-cols-[1fr_1.15fr_1fr] overflow-hidden rounded-none ring-1 backdrop-blur-xl"
+        className="liquid-glass-chrome pointer-events-auto mx-auto grid h-16 w-[min(calc(100%-2rem),26rem)] grid-cols-[1fr_1.15fr_1fr] gap-1 overflow-hidden rounded-[1.25rem] p-1.5"
       >
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
               <Button
                 variant="ghost"
-                className="h-full w-full flex-col gap-0.5 rounded-none border-0 text-[0.625rem] font-medium tracking-[0.01em]"
+                className="h-full w-full flex-col gap-0.5 rounded-xl border-0 text-[0.625rem] font-medium tracking-[0.01em]"
               >
                 <MenuIcon className="size-4" />
                 Pages
@@ -60,7 +60,7 @@ export function AppActionDock({
             side="top"
             align="start"
             sideOffset={16}
-            className="bg-popover/95 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-none p-1.5 shadow-none backdrop-blur-xl"
+            className="w-[min(12rem,calc(100vw-2rem))] overflow-hidden rounded-2xl p-1.5"
           >
             <div className="text-muted-foreground px-2 pt-1 pb-2 text-[0.625rem] font-medium tracking-[0.02em] uppercase">
               Go to
@@ -71,7 +71,7 @@ export function AppActionDock({
               return (
                 <DropdownMenuItem
                   key={item.name}
-                  className="min-h-10 rounded-none"
+                  className="min-h-10 rounded-xl"
                   render={
                     <Link
                       {...item.link}
@@ -90,10 +90,10 @@ export function AppActionDock({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="p-1.5">
+        <div>
           <Button
             onClick={() => openLogTransaction('expense')}
-            className="h-full w-full flex-col gap-0.5 rounded-none border-0 text-[0.625rem] font-semibold tracking-[0.01em]"
+            className="h-full w-full flex-col gap-0.5 rounded-xl border-0 text-[0.625rem] font-semibold tracking-[0.01em]"
           >
             <PlusIcon className="size-4" />
             New entry
@@ -102,7 +102,7 @@ export function AppActionDock({
 
         <Button
           variant="ghost"
-          className="h-full w-full flex-col gap-0.5 rounded-none border-0 text-[0.625rem] font-medium tracking-[0.01em]"
+          className="h-full w-full flex-col gap-0.5 rounded-xl border-0 text-[0.625rem] font-medium tracking-[0.01em]"
           onClick={onRefresh}
           disabled={isRefreshing}
         >
@@ -124,7 +124,7 @@ export function MobileActionDockSpacer() {
   return (
     <div
       aria-hidden="true"
-      className="h-[calc(5rem+var(--safe-area-inset-bottom))] shrink-0 md:hidden"
+      className="h-[calc(6rem+var(--safe-area-inset-bottom))] shrink-0 md:hidden"
     />
   )
 }

@@ -56,9 +56,10 @@ typography:
     letterSpacing: "0.02em"
 rounded:
   none: "0"
-  sm: "0"
-  md: "0"
-  lg: "0"
+  sm: "0.375rem"
+  md: "0.5rem"
+  lg: "0.625rem"
+  xl: "0.875rem"
 spacing:
   px: "1px"
   half: "2px"
@@ -136,12 +137,13 @@ Beaver Money's interface is a craftsman's bench: tools within reach, columns str
 
 Density is the policy, not an accident. Default rows are tight (`h-7` for inputs and buttons, `text-xs/relaxed` for body), targets are real but compact, and there is no breathing room offered "to look modern." The aesthetic lineage runs through Linear, Raycast, Stripe Dashboard, Beancount, and the better personal-finance managers (Monarch, Copilot, Lunch Money) without inheriting their consumer-fintech polish. We sit closer to a measurement instrument than to a marketing page.
 
-This system explicitly rejects every visual idiom that signals "fintech" at a glance: gradient hero metrics, navy-and-gold legacy bank chrome, neon-on-black crypto trading, glassmorphism, soft-pastel SaaS-cream, gamified streaks, and identical icon-heading-text card grids. If a stranger could guess "fintech" from a 50ms glance at a gradient and a chart, the design has failed.
+This system explicitly rejects every visual idiom that signals "fintech" at a glance: gradient hero metrics, navy-and-gold legacy bank chrome, neon-on-black crypto trading, indiscriminate glass cards, soft-pastel SaaS-cream, gamified streaks, and identical icon-heading-text card grids. Translucency belongs to navigation and floating layers, never the ledger itself.
 
 **Key Characteristics:**
-- Sharp corners. `--radius: 0` is the load-bearing decision; the entire scale collapses to zero.
+
+- Rounded precision. A 10px root radius softens the enclosure while compact controls remain tightly shaped.
 - Single warm hue (92°) tints every neutral. There is no cool grey anywhere in this product.
-- Rings, not shadows. Depth is conveyed by `ring-1 ring-foreground/10` and tonal layering.
+- Material hierarchy. Opaque ledger surfaces use rings and restrained ambient depth; navigation and overlays use warm translucent glass.
 - One typeface (Inter Variable). Hierarchy by scale and weight, never by family.
 - Semantic chart palette is fixed and meaningful. Colors map to account categories, not decoration.
 - Privacy-mode masking is a first-class state. Every numeric value must support it.
@@ -219,19 +221,22 @@ A separate **chart-1..chart-5** grey ramp (`oklch(0.87 0.005 92)` down to `oklch
 
 ## 4. Elevation
 
-This system is **flat with rings**. There are no `box-shadow` tokens, no soft drop shadows, no glassmorphism, no blur effects of any kind. Depth is conveyed by three legitimate mechanisms only:
+This system uses **layered material with restrained depth**. The financial ledger remains opaque and calm. Chrome and floating surfaces may become translucent when the material explains their position above content. Depth is conveyed by four mechanisms:
 
 1. **Tonal layering**: surfaces lift via background lightness (sidebar Bone Cream sits on Paper White content; warm-walnut accents sit on dark-mode card surfaces).
 2. **Ring borders**: cards and key containers carry `ring-1 ring-foreground/10` (a 10%-foreground hairline). This reads as a confident pencil line, not a glow.
 3. **Border separators**: form inputs, table rows, and lists use `border-input` (Pencil Grey) at 1px to delimit fields. Borders are structural; they delineate, they don't decorate.
+4. **Material depth**: floating navigation, menus, dialogs, drawers, and sheets may use a warm translucent fill, backdrop blur, a top-edge highlight, and a soft ambient shadow.
 
-There is no hover-lift, no tilt, no elevation increase on click. State changes are conveyed by background-color shifts, ring-color shifts, and (for buttons) a single-pixel `translate-y-px` press tic.
+There is no hover tilt and no decorative parallax. State changes use color, ring, and a short 0.97 press scale that returns with an exponential ease.
 
 ### Named Rules
 
-**The No-Shadow Rule.** Drop shadows are forbidden across the product. If a designer believes a surface needs to "lift," the answer is a ring border or a tonal-layer adjustment, not a shadow. Stitch's ambient and key shadows are not reintroduced under any pretext.
+**The Earned-Depth Rule.** Ambient shadows and blur belong only to surfaces that are physically above other content: app chrome, popovers, dialogs, sheets, drawers, and the floating action button. Ledger cards get at most a one-pixel ambient shadow plus an inset highlight.
 
 **The Ring-Hairline Rule.** When a card needs an edge, it gets `ring-1 ring-foreground/10`. The ring sits inside the box; it does not affect layout; it does not change opacity on hover. It is the standard load-bearing edge for any container that holds tabular data.
+
+**The Glass-Chrome Rule.** Glass is warm, never blue-grey. Light mode uses a cream material around 78% opacity; dark mode uses warm walnut around 76%. `backdrop-filter` is an enhancement, not a dependency, so the fallback remains fully legible.
 
 ## 5. Components
 
@@ -239,10 +244,10 @@ The product uses Base UI (`@base-ui/react`) primitives wrapped to shadcn `base-m
 
 ### Buttons
 
-- **Shape:** square corners (`rounded-md` resolves to 0). Borders are 1px transparent except for the outline variant. Background-clip is `padding-box` so the border-tinted background does not bleed.
+- **Shape:** 10px corners (`rounded-lg`). Borders are 1px transparent except for the outline variant. Background-clip is `padding-box` so the border-tinted background does not bleed.
 - **Default size:** 28px tall (`h-7`), 8px horizontal padding, 12px font (`text-xs/relaxed`), 500 weight. Icon size 14px (`size-3.5`) when present.
-- **Primary:** `bg-primary` (Beaver Pelt Amber) with `text-primary-foreground` (warm dark brown). Hover dims background to `/80`. Active translates 1px down. Focus shows a 2px ring at `ring/30`.
-- **Outline:** transparent background, `border-border` (Pencil Grey), foreground text. Hover fills with `bg-input/50`.
+- **Primary:** `bg-primary` (Beaver Pelt Amber) with `text-primary-foreground` (warm dark brown). Hover dims background to `/80`. Active scales to 0.97 for 150ms. Focus shows a 2px ring at `ring/30`.
+- **Outline:** opaque Paper White background, `border-input` (Pencil Grey), foreground text. Hover keeps the fill stable and shifts the border to Beaver Pelt Amber at 45% so date buttons and toggle-style fields behave like every other input.
 - **Secondary:** Light Vellum background, Ink Deep text. Hover dims to `/80`.
 - **Ghost:** transparent, no border. Hover fills with `bg-muted`. Used in dense toolbars where multiple buttons share a row.
 - **Destructive:** translucent crimson background (`bg-destructive/10`), full crimson text. Hover deepens to `/20`. Reserves real saturated crimson for the foreground because that is where the user looks.
@@ -251,27 +256,27 @@ The product uses Base UI (`@base-ui/react`) primitives wrapped to shadcn `base-m
 
 ### Inputs
 
-- **Style:** 28px tall (`h-7`), `border-input` (Pencil Grey) at 1px, fill `bg-input/20` (a 20% wash of Pencil Grey for subtle layering). Square corners.
+- **Style:** 28px tall (`h-7`), `border-input` (Pencil Grey) at 1px, opaque Paper White fill, and 10px corners. Text inputs, textareas, selects, comboboxes, currency inputs, rich pickers, and outline/date buttons all consume the same shared control-surface primitive.
 - **Type:** 14px (`text-sm`) for value, 12px (`text-xs/relaxed`) on `md:` breakpoints (responsive density). Placeholder uses Ink Mid.
-- **Focus:** border shifts to `border-ring`, plus a 2px `ring-ring/30` outer ring. No glow, no animation beyond color transition.
+- **Hover / focus:** hover shifts only the border to Beaver Pelt Amber at 45%. Focus uses the full primary border plus a 2px primary ring at 20%. Fill and geometry do not change between states.
 - **Invalid:** `aria-invalid` colors the border crimson and adds a 2px crimson ring at `/20` opacity.
 - **File inputs:** the file button inlines at 24px tall, transparent background, 12px font.
 
 ### Cards
 
-- **Corner Style:** square (`rounded-lg` resolves to 0).
+- **Corner Style:** softly rounded (`rounded-xl`, 14px) so grouped ledger surfaces feel like a single machined tray.
 - **Background:** Paper White in light mode, a slightly-lifted warm dark in dark mode (`oklch(0.205 0.008 92)`).
-- **Edge:** `ring-1 ring-foreground/10` (the Ring-Hairline Rule). No shadow, no border-color shift on hover by default.
+- **Edge:** `ring-1 ring-foreground/10` (the Ring-Hairline Rule) and a restrained one-pixel ambient shadow. No inset highlight and no hover lift.
 - **Internal padding:** 16px vertical (`py-4`), 16px horizontal (`px-4`) at default size; 12px at `data-size="sm"`.
 - **Title:** `font-heading text-sm font-medium` (which equals Inter Medium 14px, since `font-heading == font-sans`).
 - **Description:** Ink Mid at 12px.
-- **Image-leading cards:** when the first child is `<img>`, the card removes top padding so the image sits flush to the squared top corners.
+- **Image-leading cards:** when the first child is `<img>`, the card removes top padding so the image sits flush to the rounded top corners.
 
 ### Sidebar Navigation
 
-- **Style:** Bone Cream surface, no border against Paper White content (relies on tonal layering).
+- **Style:** inset warm glass enclosure with a rounded 10px edge, a subtle ambient shadow, and backdrop blur where supported.
 - **Item type:** 12px body, 500 weight when active, 400 when default.
-- **Active state:** Burnished Gold background fill at full saturation, with `sidebar-primary-foreground` (warm cream) text. The active row is the only place Burnished Gold appears in the sidebar.
+- **Active state:** a neutral Vellum squircle with stronger label weight. It marks location without turning every navigation row into a capsule.
 - **Hover state:** Light Vellum background, Ink Near-Black text.
 - **Icon size:** 14px (`size-3.5`), Lucide icons exclusively.
 
@@ -292,18 +297,19 @@ The product uses Base UI (`@base-ui/react`) primitives wrapped to shadcn `base-m
 
 **The Compact-Target Rule.** Buttons and inputs are 28px tall by default. Touch-priority surfaces (mobile sheet actions, mobile nav) may opt into 32-44px, but desktop never exceeds 28px without explicit reason. The hit area extends invisibly via `padding` for accessibility, but the visible chrome stays compact.
 
-**The State-By-Color Rule.** State changes (hover, focus, active, disabled, invalid) shift color, ring, and at most a 1px translate. They do not animate scale, blur, opacity-on-translate, or any layout property.
+**The State-Motion Rule.** State changes (hover, focus, active, disabled, invalid) shift color and ring. Pressable controls may scale to 0.96-0.98 for 150ms. Overlays use opacity, scale, and transform for 150-250ms with quart or quint easing. Layout properties are never animated.
 
 ## 6. Do's and Don'ts
 
 ### Do
 
-- **Do** keep `--radius: 0`. The squared aesthetic is the load-bearing precision signal.
+- **Do** use the 10px root radius consistently. Dense controls resolve to 8px; cards and floating chrome resolve to 14-22px.
 - **Do** tint every neutral toward hue 92° with chroma 0.005-0.01.
 - **Do** use OKLCH for color values in `styles.css`. Match the existing token format; never split the source of truth into hex/HSL/RGB.
 - **Do** apply `font-variant-numeric: tabular-nums` to any column of numbers.
 - **Do** use the seven-color semantic account palette consistently. Net worth is always green; liabilities are always red; investments are always amber-orange.
 - **Do** use `ring-1 ring-foreground/10` to give cards an edge.
+- **Do** reserve liquid glass for app chrome and floating layers. Keep ledger content opaque.
 - **Do** keep buttons and inputs at `h-7` (28px) by default.
 - **Do** use Lucide for every icon. Single-family icon set.
 - **Do** make privacy-mode masking work for any new financial value rendered.
@@ -312,7 +318,7 @@ The product uses Base UI (`@base-ui/react`) primitives wrapped to shadcn `base-m
 ### Don't
 
 - **Don't** use `#000` or `#fff` anywhere. Every neutral must carry the warm hue tint.
-- **Don't** introduce `box-shadow` for elevation. The product is flat with rings; no exceptions.
+- **Don't** use large shadows on inline content. Ambient depth is reserved for genuinely floating layers.
 - **Don't** use `background-clip: text` with a gradient. No gradient text, no gradient hero metrics, no "background gradient meets soft glow." Solid colors only.
 - **Don't** introduce a second typeface. Inter Variable does all the work. Hierarchy is scale + weight.
 - **Don't** add cool greys, slate, navy, or "cyberpunk" neon. Even the dark theme stays warm-neutral.
@@ -322,5 +328,5 @@ The product uses Base UI (`@base-ui/react`) primitives wrapped to shadcn `base-m
 - **Don't** show identical icon-heading-text card grids. The landing page already brushes against this; no further surfaces should adopt the pattern.
 - **Don't** imply auto-import is "coming soon" or that manual entry is a fallback. Manual is the feature; the design must say so.
 - **Don't** gamify. No streaks, no confetti, no green/red "you saved!" dopamine. The reward for logging is the awareness, not the animation.
-- **Don't** use glassmorphism. Backdrop-filter is reserved for the rare case of overlay readability; it is never decorative.
+- **Don't** turn every card into glass. Blur on dense tables, charts, or financial values reduces trust and legibility.
 - **Don't** bump default body size up "to feel more breathable." Density is the design.

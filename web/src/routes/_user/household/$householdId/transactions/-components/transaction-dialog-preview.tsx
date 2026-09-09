@@ -113,7 +113,7 @@ export function TransactionDialogPreview({
         </DialogDescription>
       </DialogHeader>
 
-      <div className="border-border [a]:hover:bg-muted group/item focus-visible:border-ring focus-visible:ring-ring/50 flex w-full flex-wrap items-center rounded-md border text-xs/relaxed outline-none focus-visible:ring-[3px]">
+      <div className="border-border [a]:hover:bg-muted group/item focus-visible:border-ring focus-visible:ring-ring/50 flex w-full flex-wrap items-center overflow-hidden rounded-lg border text-xs/relaxed outline-none focus-visible:ring-[3px]">
         {transaction
           ? previewItems.map((item, index) => (
               <Fragment key={item.id}>

@@ -12,6 +12,7 @@ export function PageAddButton({ label, ...linkOptions }: PageAddButtonProps) {
   return (
     <Button
       variant="outline"
+      nativeButton={false}
       render={<Link {...linkOptions} />}
       className="bg-background shrink-0"
     >

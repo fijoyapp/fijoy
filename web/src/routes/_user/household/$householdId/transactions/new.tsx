@@ -81,7 +81,7 @@ function RouteComponent() {
 
   return (
     <div className="flex h-full min-h-0 w-full overflow-hidden">
-      <Item className="h-full min-h-0 overflow-hidden p-0">
+      <Item className="h-full min-h-0 overflow-hidden rounded-none border-0 p-0">
         <LogTransaction fragmentRef={data.household} />
       </Item>
     </div>
