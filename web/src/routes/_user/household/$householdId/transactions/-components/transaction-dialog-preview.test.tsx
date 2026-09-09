@@ -79,6 +79,13 @@ it('renders normalized transaction data while editing controls load', () => {
   expect(screen.getByText('Date')).toBeTruthy()
   expect(screen.getByText('Category')).toBeTruthy()
   expect(screen.getByText('Options')).toBeTruthy()
+
+  const categorySkeleton = screen
+    .getByText('Category')
+    .closest('[data-slot="transaction-dialog-preview-field"]')
+    ?.querySelector('[data-slot="skeleton"]')
+  expect(categorySkeleton?.className).toContain('h-11')
+  expect(categorySkeleton?.className).toContain('md:h-9')
 })
 
 it('masks cached financial values in privacy mode', () => {
