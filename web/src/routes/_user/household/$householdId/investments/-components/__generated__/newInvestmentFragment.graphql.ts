@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0d7ff8d6805aeddbc9ca0754a56ad370>>
+ * @generated SignedSource<<96e988a4807e1a9d3e4dac031595a714>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,17 +15,9 @@ export type newInvestmentFragment$data = {
   readonly accounts: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly householdCurrency: {
-          readonly code: string;
-        };
-        readonly icon: string | null | undefined;
         readonly id: string;
-        readonly name: string;
         readonly type: AccountType;
-        readonly user: {
-          readonly name: string;
-        };
-        readonly value: string;
+        readonly " $fragmentSpreads": FragmentRefs<"transactionAccountPickerFragment">;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -36,15 +28,7 @@ export type newInvestmentFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"newInvestmentFragment">;
 };
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [
     {
       "defaultValue": null,
@@ -111,50 +95,70 @@ return {
                   "name": "type",
                   "storageKey": null
                 },
-                (v0/*: any*/),
                 {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "icon",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "value",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "HouseholdCurrency",
-                  "kind": "LinkedField",
-                  "name": "householdCurrency",
-                  "plural": false,
+                  "kind": "InlineDataFragmentSpread",
+                  "name": "transactionAccountPickerFragment",
                   "selections": [
                     {
                       "alias": null,
                       "args": null,
                       "kind": "ScalarField",
-                      "name": "code",
+                      "name": "name",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "icon",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "balance",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "HouseholdCurrency",
+                      "kind": "LinkedField",
+                      "name": "householdCurrency",
+                      "plural": false,
+                      "selections": [
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "code",
+                          "storageKey": null
+                        }
+                      ],
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "Transaction",
+                      "kind": "LinkedField",
+                      "name": "latestTransaction",
+                      "plural": false,
+                      "selections": [
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "datetime",
+                          "storageKey": null
+                        }
+                      ],
                       "storageKey": null
                     }
                   ],
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
                   "args": null,
-                  "concreteType": "User",
-                  "kind": "LinkedField",
-                  "name": "user",
-                  "plural": false,
-                  "selections": [
-                    (v0/*: any*/)
-                  ],
-                  "storageKey": null
+                  "argumentDefinitions": []
                 }
               ],
               "storageKey": null
@@ -169,8 +173,7 @@ return {
   "type": "Household",
   "abstractKey": null
 };
-})();
 
-(node as any).hash = "3b7ba133bbef9b5bcb790b02eacbe4f2";
+(node as any).hash = "71b722e0007ba9aa5c2202c003d1de79";
 
 export default node;

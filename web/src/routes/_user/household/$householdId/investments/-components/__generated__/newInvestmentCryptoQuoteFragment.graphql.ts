@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<03824b7df8a91c4c67e1e2d167eb2a9f>>
+ * @generated SignedSource<<e686032142540eb7c4cc60bd8e223763>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type newInvestmentCryptoQuoteFragment$data = {
-  readonly cryptoQuote: {
+  readonly cryptoQuote?: {
     readonly currency: string;
     readonly currentPrice: string;
     readonly exchange: string;
@@ -30,6 +30,11 @@ import newInvestmentCryptoQuoteQuery_graphql from './newInvestmentCryptoQuoteQue
 const node: ReaderFragment = {
   "argumentDefinitions": [
     {
+      "defaultValue": true,
+      "kind": "LocalArgument",
+      "name": "skipQuote"
+    },
+    {
       "defaultValue": "",
       "kind": "LocalArgument",
       "name": "symbol"
@@ -46,62 +51,69 @@ const node: ReaderFragment = {
   "name": "newInvestmentCryptoQuoteFragment",
   "selections": [
     {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "symbol",
-          "variableName": "symbol"
-        }
-      ],
-      "concreteType": "CryptoQuoteResult",
-      "kind": "LinkedField",
-      "name": "cryptoQuote",
-      "plural": false,
+      "condition": "skipQuote",
+      "kind": "Condition",
+      "passingValue": false,
       "selections": [
         {
           "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "currentPrice",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "symbol",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "exchange",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "name",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "currency",
+          "args": [
+            {
+              "kind": "Variable",
+              "name": "symbol",
+              "variableName": "symbol"
+            }
+          ],
+          "concreteType": "CryptoQuoteResult",
+          "kind": "LinkedField",
+          "name": "cryptoQuote",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "currentPrice",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "symbol",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "exchange",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "name",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "currency",
+              "storageKey": null
+            }
+          ],
           "storageKey": null
         }
-      ],
-      "storageKey": null
+      ]
     }
   ],
   "type": "Query",
   "abstractKey": null
 };
 
-(node as any).hash = "317789480b4494719fff3e26c736976b";
+(node as any).hash = "e564c7815c5d038f347f6c5cfe678b91";
 
 export default node;

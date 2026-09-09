@@ -3,10 +3,10 @@ import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import { useFragment, useMutation, useRefetchableFragment } from 'react-relay'
-import { capitalize } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
 import { useNavigate } from '@tanstack/react-router'
+import { BitcoinIcon, ChartNoAxesCombinedIcon, CheckIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -26,14 +26,6 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox'
-import {
   Item,
   ItemContent,
   ItemDescription,
@@ -47,11 +39,7 @@ import { commitMutationResult } from '@/lib/relay'
 import { type newInvestmentMutation } from './__generated__/newInvestmentMutation.graphql'
 import { newInvestmentFragment$key } from './__generated__/newInvestmentFragment.graphql'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  getLogoTickerURL,
-  getLogoCryptoURL,
-  getLogoDomainURL,
-} from '@/lib/logo'
+import { getLogoTickerURL, getLogoCryptoURL } from '@/lib/logo'
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useEffect, useState, useTransition } from 'react'
@@ -59,6 +47,30 @@ import { Spinner } from '@/components/ui/spinner'
 import { newInvestmentStockQuoteFragment$key } from './__generated__/newInvestmentStockQuoteFragment.graphql'
 import { newInvestmentCryptoQuoteFragment$key } from './__generated__/newInvestmentCryptoQuoteFragment.graphql'
 import { useDisplayCurrency } from '@/hooks/use-display-currency'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { TransactionAccountPicker } from '../../transactions/-components/transaction-account-picker'
+
+type InvestmentType = (typeof INVESTMENT_TYPE_LIST)[number]
+
+const INVESTMENT_TYPE_PRESENTATION = {
+  stock: {
+    label: 'Stock',
+    description: 'Shares, funds, and exchange-traded assets',
+    icon: ChartNoAxesCombinedIcon,
+  },
+  crypto: {
+    label: 'Crypto',
+    description: 'Cryptocurrencies and digital assets',
+    icon: BitcoinIcon,
+  },
+} satisfies Record<
+  InvestmentType,
+  { label: string; description: string; icon: typeof BitcoinIcon }
+>
+
+function isInvestmentType(value: string | undefined): value is InvestmentType {
+  return INVESTMENT_TYPE_LIST.some((type) => type === value)
+}
 
 const formSchema = z.object({
   name: z
@@ -83,15 +95,7 @@ const newInvestmentFragment = graphql`
         node {
           id
           type
-          name
-          icon
-          value
-          householdCurrency {
-            code
-          }
-          user {
-            name
-          }
+          ...transactionAccountPickerFragment
         }
       }
     }
@@ -101,8 +105,11 @@ const newInvestmentFragment = graphql`
 const newInvestmentStockQuoteFragment = graphql`
   fragment newInvestmentStockQuoteFragment on Query
   @refetchable(queryName: "newInvestmentStockQuoteQuery")
-  @argumentDefinitions(symbol: { type: "String", defaultValue: "" }) {
-    stockQuote(symbol: $symbol) {
+  @argumentDefinitions(
+    symbol: { type: "String", defaultValue: "" }
+    skipQuote: { type: "Boolean", defaultValue: true }
+  ) {
+    stockQuote(symbol: $symbol) @skip(if: $skipQuote) {
       currentPrice
       symbol
       exchange
@@ -115,8 +122,11 @@ const newInvestmentStockQuoteFragment = graphql`
 const newInvestmentCryptoQuoteFragment = graphql`
   fragment newInvestmentCryptoQuoteFragment on Query
   @refetchable(queryName: "newInvestmentCryptoQuoteQuery")
-  @argumentDefinitions(symbol: { type: "String", defaultValue: "" }) {
-    cryptoQuote(symbol: $symbol) {
+  @argumentDefinitions(
+    symbol: { type: "String", defaultValue: "" }
+    skipQuote: { type: "Boolean", defaultValue: true }
+  ) {
+    cryptoQuote(symbol: $symbol) @skip(if: $skipQuote) {
       currentPrice
       symbol
       exchange
@@ -172,7 +182,7 @@ export function NewInvestment({
 
   const { displayCurrencyCode } = useDisplayCurrency()
 
-  const { formatCurrency, formatCurrencyWithPrivacyMode } = useCurrency()
+  const { formatCurrency } = useCurrency()
 
   const [commitMutation, isMutationInFlight] =
     useMutation<newInvestmentMutation>(newInvestmentMutation)
@@ -300,72 +310,16 @@ export function NewInvestment({
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Account</FieldLabel>
-                    <Combobox
-                      items={investmentAccounts.map((account) => account.id)}
-                      itemToStringLabel={(item) =>
-                        investmentAccounts.find((acc) => acc.id === item)
-                          ?.name || ''
-                      }
+                    <TransactionAccountPicker
+                      accounts={investmentAccounts}
+                      name={field.name}
+                      label="Account"
                       value={field.state.value}
-                      onValueChange={(value) => {
-                        field.handleChange(value || '')
-                      }}
-                    >
-                      <ComboboxInput
-                        data-1p-ignore
-                        id={field.name}
-                        name={field.name}
-                        placeholder="Select an account"
-                        onBlur={field.handleBlur}
-                        aria-invalid={isInvalid}
-                      />
-                      <ComboboxContent>
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList>
-                          {(item: string) => {
-                            const account = investmentAccounts.find(
-                              (acc) => acc.id === item,
-                            )
-                            if (!account) return null
-                            return (
-                              <ComboboxItem key={item} value={item}>
-                                <Item size="xs" className="p-0">
-                                  <ItemMedia variant="image">
-                                    <Avatar className="size-6">
-                                      <AvatarImage
-                                        src={getLogoDomainURL(
-                                          account.icon || '',
-                                        )}
-                                        alt={account.icon || 'unknown logo'}
-                                      />
-                                      <AvatarFallback>
-                                        {account.name}
-                                      </AvatarFallback>
-                                    </Avatar>
-                                  </ItemMedia>
-                                  <ItemContent>
-                                    <ItemTitle>{account.name}</ItemTitle>
-                                    <ItemDescription>
-                                      <span className="tabular-nums">
-                                        {formatCurrencyWithPrivacyMode({
-                                          value: account.value,
-                                          currencyCode:
-                                            account.householdCurrency.code,
-                                          liability:
-                                            account.type === 'liability',
-                                        })}
-                                      </span>
-                                      <span aria-hidden="true"> · </span>
-                                      {account.user.name}
-                                    </ItemDescription>
-                                  </ItemContent>
-                                </Item>
-                              </ComboboxItem>
-                            )
-                          }}
-                        </ComboboxList>
-                      </ComboboxContent>
-                    </Combobox>
+                      onValueChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      invalid={isInvalid}
+                      preferredTypes={['investment']}
+                    />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
@@ -388,35 +342,67 @@ export function NewInvestment({
                   field.state.meta.isTouched && !field.state.meta.isValid
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Type</FieldLabel>
-                    <Combobox
-                      items={INVESTMENT_TYPE_LIST}
-                      value={field.state.value}
-                      onValueChange={(value) => field.handleChange(value || '')}
+                    <FieldLabel id={`${field.name}-label`}>Type</FieldLabel>
+                    <ToggleGroup
+                      value={
+                        isInvestmentType(field.state.value)
+                          ? [field.state.value]
+                          : []
+                      }
+                      onValueChange={(values) => {
+                        const nextValue = values[0]
+                        if (isInvestmentType(nextValue)) {
+                          field.handleChange(nextValue)
+                        }
+                      }}
+                      onBlur={(event) => {
+                        if (
+                          !event.currentTarget.contains(event.relatedTarget)
+                        ) {
+                          field.handleBlur()
+                        }
+                      }}
+                      variant="outline"
+                      spacing={2}
+                      aria-labelledby={`${field.name}-label`}
+                      aria-invalid={isInvalid}
+                      className="grid w-full grid-cols-2 items-stretch"
                     >
-                      <ComboboxInput
-                        id={field.name}
-                        name={field.name}
-                        placeholder="Select a type"
-                        onBlur={field.handleBlur}
-                        aria-invalid={isInvalid}
-                        className="*:capitalize"
-                      />
-                      <ComboboxContent>
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList className="">
-                          {(item: string) => (
-                            <ComboboxItem
-                              key={item}
-                              value={item}
-                              className="flex flex-col items-start gap-0"
+                      {INVESTMENT_TYPE_LIST.map((type) => {
+                        const {
+                          label,
+                          description,
+                          icon: Icon,
+                        } = INVESTMENT_TYPE_PRESENTATION[type]
+                        return (
+                          <ToggleGroupItem
+                            key={type}
+                            value={type}
+                            aria-invalid={isInvalid}
+                            className="aria-pressed:bg-muted aria-pressed:hover:bg-muted aria-pressed:outline-foreground/40 h-full min-h-16 w-full justify-start gap-2.5 px-3 py-2 text-left whitespace-normal aria-pressed:outline-1 aria-pressed:-outline-offset-1 aria-pressed:outline-solid"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="bg-muted ring-foreground/10 grid size-8 shrink-0 place-items-center rounded-lg ring-1"
                             >
-                              <span className="">{capitalize(item)}</span>
-                            </ComboboxItem>
-                          )}
-                        </ComboboxList>
-                      </ComboboxContent>
-                    </Combobox>
+                              <Icon className="size-4" />
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-xs/relaxed font-semibold">
+                                {label}
+                              </span>
+                              <span className="text-muted-foreground block text-xs/normal font-normal">
+                                {description}
+                              </span>
+                            </span>
+                            <CheckIcon
+                              aria-hidden="true"
+                              className="shrink-0 opacity-0 group-aria-pressed/toggle:opacity-100"
+                            />
+                          </ToggleGroupItem>
+                        )
+                      })}
+                    </ToggleGroup>
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
@@ -465,12 +451,14 @@ export function NewInvestment({
                 onChange: ({ value, fieldApi }) => {
                   startTransition(() => {
                     setQueriedSymbol(value)
+                    if (!value) return
+
                     const investmentType = fieldApi.form.getFieldValue('type')
 
                     if (investmentType === 'crypto') {
-                      refetchCryptoQuote({ symbol: value })
+                      refetchCryptoQuote({ symbol: value, skipQuote: false })
                     } else {
-                      refetchStockQuote({ symbol: value })
+                      refetchStockQuote({ symbol: value, skipQuote: false })
                     }
                   })
                 },
