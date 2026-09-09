@@ -144,7 +144,7 @@ it('opens a searchable account drawer on mobile', async () => {
   expect(await screen.findByRole('dialog')).toBeTruthy()
   expect(
     document.querySelector('[data-slot="drawer-popup"]')?.className,
-  ).toContain('h-[min(55dvh,28rem)]')
+  ).toContain('h-[min(45dvh,24rem)]')
 
   fireEvent.change(screen.getByRole('combobox', { name: 'Search account' }), {
     target: { value: 'Account 1' },
