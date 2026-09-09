@@ -27,7 +27,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   return (
-    <div className="h-[calc(var(--safe-viewport-height)-2.5rem)] min-h-0 min-w-0 overflow-hidden">
+    <div className="h-[calc(100dvh-2.5rem)] min-h-0 min-w-0 overflow-hidden">
       <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl min-w-0 flex-col overflow-hidden p-4">
         <Outlet />
       </div>

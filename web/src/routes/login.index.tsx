@@ -8,7 +8,7 @@ export const Route = createFileRoute('/login/')({
 
 function RouteComponent() {
   return (
-    <div className="flex min-h-[var(--safe-viewport-height)] flex-col items-center justify-center gap-10 p-6 md:p-10">
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-10 p-6 md:p-10">
       <div className="flex w-full max-w-xs flex-col items-center gap-6">
         <Link to="/" className="flex flex-col items-center gap-4 no-underline">
           <Logo size={96} className="rounded-xl" />

@@ -239,9 +239,9 @@ function RouteComponent() {
             <DisplayCurrencyProvider householdRef={data.household}>
               <Hotkeys />
               <CommandMenu />
-              <SidebarProvider className="h-[var(--safe-viewport-height)] min-h-0 overflow-hidden">
+              <SidebarProvider className="h-dvh min-h-0 overflow-hidden">
                 <AppSidebar fragmentRef={data} />
-                <SidebarInset className="h-[var(--safe-viewport-height)] min-h-0 overflow-hidden md:h-[calc(var(--safe-viewport-height)-1rem)]">
+                <SidebarInset className="h-dvh min-h-0 overflow-hidden md:h-[calc(100dvh-1rem)]">
                   <header className="liquid-glass-chrome z-30 mx-2 mt-2 flex h-11 shrink-0 items-center rounded-xl p-1 transition-[width,height] duration-200 ease-[var(--ease-out-quint)]">
                     <SidebarTrigger className="cursor-pointer" />
                     <div className="flex flex-1 items-center px-3">
