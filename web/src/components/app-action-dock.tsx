@@ -38,10 +38,10 @@ export function AppActionDock({
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 md:hidden">
+    <div className="bg-background z-40 shrink-0 px-4 pt-2 pb-4 md:hidden">
       <nav
         aria-label="Quick actions"
-        className="liquid-glass-chrome pointer-events-auto mx-auto grid h-16 w-[min(calc(100%-2rem),26rem)] grid-cols-[1fr_1.15fr_1fr] gap-1 overflow-hidden rounded-[1.25rem] p-1.5"
+        className="liquid-glass-chrome mx-auto grid h-16 w-full max-w-[26rem] grid-cols-[1fr_1.15fr_1fr] gap-1 overflow-hidden rounded-[1.25rem] p-1.5"
       >
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -118,8 +118,4 @@ export function AppActionDock({
       </nav>
     </div>
   )
-}
-
-export function MobileActionDockSpacer() {
-  return <div aria-hidden="true" className="h-24 shrink-0 md:hidden" />
 }

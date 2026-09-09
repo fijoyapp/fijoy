@@ -17,7 +17,6 @@ import { focusInitialTransactionControl } from './transaction-focus'
 import { useLogTransaction } from '@/hooks/use-log-transaction'
 import type { LogTransactionType } from '@/hooks/log-transaction-store'
 import { cn } from '@/lib/utils'
-import { MobileActionDockSpacer } from '@/components/app-action-dock'
 
 const logTransactionFragment = graphql`
   fragment logTransactionFragment on Household
@@ -155,14 +154,13 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
         </ScrollArea>
       </div>
 
-      <ScrollArea className="min-h-0 w-full flex-1 [&_[data-slot=scroll-area-viewport]]:overscroll-contain">
+      <ScrollArea className="min-h-0 w-full flex-1 overflow-hidden [&_[data-slot=scroll-area-viewport]]:overflow-x-hidden [&_[data-slot=scroll-area-viewport]]:overscroll-contain">
         {selectedType === 'expense' && <NewExpense fragmentRef={data} />}
         {selectedType === 'income' && <NewIncome fragmentRef={data} />}
         {selectedType === 'transfer' && <NewTransfer fragmentRef={data} />}
         {selectedType === 'buy' && <NewBuy fragmentRef={data} />}
         {selectedType === 'sell' && <NewSell fragmentRef={data} />}
         {selectedType === 'move' && <NewMove fragmentRef={data} />}
-        <MobileActionDockSpacer />
       </ScrollArea>
     </Item>
   )
