@@ -75,13 +75,12 @@ export function AccountTypePicker({
           onBlur()
         }
       }}
-      orientation="vertical"
       variant="outline"
-      spacing={0}
+      spacing={2}
       aria-labelledby={labelledBy}
       aria-describedby={describedBy}
       aria-invalid={invalid}
-      className="w-full"
+      className="grid w-full grid-cols-1 items-stretch sm:grid-cols-2"
     >
       {ACCOUNT_TYPE_LIST.map((type) => {
         const {
@@ -95,11 +94,11 @@ export function AccountTypePicker({
             key={type}
             value={type}
             aria-invalid={invalid}
-            className="aria-pressed:bg-muted aria-pressed:hover:bg-muted aria-pressed:outline-foreground/40 h-auto min-h-12 w-full justify-start gap-3 px-3 py-2 text-left whitespace-normal aria-pressed:outline-1 aria-pressed:-outline-offset-1 aria-pressed:outline-solid"
+            className="aria-pressed:bg-muted aria-pressed:hover:bg-muted aria-pressed:outline-foreground/40 h-full min-h-16 w-full justify-start gap-2.5 px-3 py-2 text-left whitespace-normal aria-pressed:outline-1 aria-pressed:-outline-offset-1 aria-pressed:outline-solid"
           >
             <span
               aria-hidden="true"
-              className="bg-muted ring-foreground/10 grid size-8 shrink-0 place-items-center ring-1"
+              className="bg-muted ring-foreground/10 grid size-8 shrink-0 place-items-center rounded-lg ring-1"
             >
               <Icon className={iconClassName} />
             </span>
